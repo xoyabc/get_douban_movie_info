@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
 import re  
 import sys  
 import urllib  
@@ -81,7 +80,7 @@ def get_movie_base_info(subject):
         ratingCount = rating_info
     movie_info['ratingValue'] = ratingValue
     movie_info['ratingCount'] = ratingCount
-    # region, language, imdb
+    # directedBy, cast, region, language, imdb
     subuject_info_result = soup.find_all(attrs={'id' : 'info'})[0]
     try:
         directedBy = subuject_info_result.find('a', attrs={"rel": "v:directedBy"}).text
@@ -96,11 +95,34 @@ def get_movie_base_info(subject):
     subject_base_info_list = subuject_info_result.contents
     for i,v in enumerate(subject_base_info_list):
         if v.string is not None and '制片国家/地区:' in v.string:
-            movie_info['region'] = subject_base_info_list[i+1].string.strip().split('/')[0].replace(' ', '')
+            movie_info['region'] = subject_base_info_list[i+1].string.strip().split('/')[0].replace(" ", "")
         if v.string is not None and '语言:' in v.string:
-            movie_info['language'] = subject_base_info_list[i+1].string.strip().split('/')[0].replace(' ', '')
+            movie_info['language'] = subject_base_info_list[i+1].string.strip().split('/')[0].replace(" ", "")
         if v.string is not None and 'IMDb链接' in v.string:
             movie_info['imdb_number'] = subject_base_info_list[i+2].string
+    '''
+    other solutions to  get region, Language ,imdb_number
+    # Method 1
+    info_list = subuject_info_result.text.split()
+    for i,v in enumerate(info_list):
+        if '导演:' in v:
+            print info_list[i+1]
+        elif '主演:' in v:
+            print info_list[i+1]
+        elif '片国家/地区:' in v:
+            print info_list[i+1]
+        elif '语言:' in v:
+            print info_list[i+1]
+        elif 'IMDb链接:' in  v:
+            print info_list[i+1]
+    # Method 2
+    { v: info_list[i+1] for i,v in enumerate(info_list) if ':' in v }
+    # Method 3
+    html = r.content.decode('utf-8')
+    re.findall(u'''语言:</span>(.*)<br/>''', html)[0]
+    re.findall(u'''<span class="pl">制片国家/地区:</span>(.*)<br/>''', html)[0]
+    re.findall(u'''<span class="pl">IMDb链接:</span> <a href="http://www.imdb.com/title/tt[0-9]+" target="_blank" rel="nofollow">(.*)</a><br>''', html)[0]
+    '''
     # deal with director
     if directedBy == 'N/A':
         movie_info['director'] = director
@@ -118,7 +140,7 @@ def get_movie_detailed_info(f):
         movie_info_list = []
         for subject_id in f:
             subject_id = subject_id.strip()
-            data = get_movie_base_info(subject_id)
+            #data = get_movie_base_info(subject_id)
             try:
                 data = get_movie_base_info(subject_id)
                 #print "{0} {1}" .format(subject_id, data['error'])
@@ -136,7 +158,7 @@ def get_movie_detailed_info(f):
             sleeptime = Decimal(sleeptime).quantize(Decimal('0.00'))
             time.sleep(sleeptime)
             #print movie_info_list
-        write_to_file('test.txt', *movie_info_list)
+            write_to_file('test.txt', *movie_info_list)
         head_instruction = "subject_id\t中文名\t年份\t国家\t语言\t类型\t主演\t导演\tIMDB编号"
         line_prepender('test.txt', head_instruction)
 
