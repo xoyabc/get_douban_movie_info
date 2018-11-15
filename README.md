@@ -135,7 +135,8 @@ ratings_count : 61806
 country : 美国
 actors : 伊莱贾·伍德, 詹妮弗·康纳利, 约翰·C·赖利, 克里斯托弗·普卢默
 ```
+## to_do
 
-
-
+- [ ] 获取IMDB评价人数
+- [ ] 获取IMDB评分
 
