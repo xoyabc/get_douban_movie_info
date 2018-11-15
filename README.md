@@ -157,4 +157,9 @@ actors : 伊莱贾·伍德, 詹妮弗·康纳利, 约翰·C·赖利, 克里斯�
 
 
 ## REF：
+
 - [python-json-loads-fails-with-valueerror-invalid-control-character-at-line-1-c](https://stackoverflow.com/questions/9295439/python-json-loads-fails-with-valueerror-invalid-control-character-at-line-1-c)
+
+- [PT-help](https://github.com/Rhilip/PT-help/blob/master/modules/infogen/README.md)
+
+- [Get movie url link](https://gist.github.com/xoyabc/6961eecc7ccf1c481f5cf31b3ec02aa3)
