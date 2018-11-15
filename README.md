@@ -97,7 +97,7 @@ The.Bold.the.Corrupt.and.the.Beautiful;血观音;2017;8.2;116795人评价
 
 根据豆瓣电影条目ID，即subject-id，获取影片详细信息，包括 subject_id,中文名,年份,国家,语言,类型,主演,导演,IMDB编号，最终会以`tab`符号分割，写入到test.txt文件中。
 
-主要使用到了requests, BeautifulSoup模块。在使用`json.loads()`解码json字符串时遇到了`ValueError`异常，后使用`strict=False`规避。
+主要使用到了requests, BeautifulSoup模块。在使用`json.loads()`解码json字符串时遇到了`ValueError`异常，报`Invalid control character at: line 85`错误，即非法的控制符号(ACSII前32个字符)，后使用`strict=False`解决。此外，也可将换行符替换为空，`json.loads(script_json.replace('\n', ''))`
 
  - 将文件名贴入movie.list
 ```bash
@@ -155,3 +155,6 @@ actors : 伊莱贾·伍德, 詹妮弗·康纳利, 约翰·C·赖利, 克里斯�
 - [ ] 获取IMDB评价人数
 - [ ] 获取IMDB评分
 
+
+## REF：
+- [python-json-loads-fails-with-valueerror-invalid-control-character-at-line-1-c](https://stackoverflow.com/questions/9295439/python-json-loads-fails-with-valueerror-invalid-control-character-at-line-1-c)
