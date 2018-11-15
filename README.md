@@ -33,7 +33,7 @@ url: https://movie.douban.com/subject/26972258/ title: 江湖儿女
 
 ## get_chn_name_from_eng_movie_name_by_douban.py
 
-电脑里下载的影片都是英文字幕的，便写了这个脚本，根据文件名中的英文名及年份获取中文名，年份，豆瓣评分呢及评级人数。
+电脑里下载的影片都是英文字幕的，便写了这个脚本，根据文件名中的英文名及年份获取中文名，年份，豆瓣评分及评分人数。
 
 ### 使用方法
  - 将文件名贴入movie.name_year
