@@ -52,8 +52,11 @@ def get_movie_base_info(subject):
         movie_info['error'] = 'movie_not_found'
         return movie_info
     # year
-    soup_year = soup.h1.find_all('span', attrs={"class": "year"})[0].text
-    movie_info['year'] = re.match(r'^.*([0-9]{4}).*$', soup_year).group(1)
+    try:
+        soup_year = soup.h1.find_all('span', attrs={"class": "year"})[0].text
+        movie_info['year'] = re.match(r'^.*([0-9]{4}).*$', soup_year).group(1)
+    except IndexError:
+        movie_info['year'] = 'N/A'
     # rating_info
     rating_info = soup.find_all(attrs={'class' : 'rating_sum'})[0].text.strip()
     # name, director, actor, genre, ratingCount, ratingValue
@@ -117,12 +120,12 @@ def get_movie_base_info(subject):
             print info_list[i+1]
     # Method 2
     { v: info_list[i+1] for i,v in enumerate(info_list) if ':' in v }
-    # Method 3
-    html = r.content.decode('utf-8')
-    re.findall(u'''语言:</span>(.*)<br/>''', html)[0]
-    re.findall(u'''<span class="pl">制片国家/地区:</span>(.*)<br/>''', html)[0]
-    re.findall(u'''<span class="pl">IMDb链接:</span> <a href="http://www.imdb.com/title/tt[0-9]+" target="_blank" rel="nofollow">(.*)</a><br>''', html)[0]
     '''
+    # Method 3
+    #html = r.content.decode('utf-8')
+    #re.findall(u'''语言:</span>(.*)<br/>''', html)[0]
+    #re.findall(u'''<span class="pl">制片国家/地区:</span>(.*)<br/>''', html)[0]
+    #re.findall(u'''<span class="pl">IMDb链接:</span> <a href="http://www.imdb.com/title/tt[0-9]+" target="_blank" rel="nofollow">(.*)</a><br>''', html)[0]
     # deal with director
     if directedBy == 'N/A':
         movie_info['director'] = director
@@ -140,7 +143,7 @@ def get_movie_detailed_info(f):
         movie_info_list = []
         for subject_id in f:
             subject_id = subject_id.strip()
-            #data = get_movie_base_info(subject_id)
+            data = get_movie_base_info(subject_id)
             try:
                 data = get_movie_base_info(subject_id)
                 #print "{0} {1}" .format(subject_id, data['error'])
