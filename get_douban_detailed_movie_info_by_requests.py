@@ -143,15 +143,18 @@ def get_movie_detailed_info(f):
         movie_info_list = []
         for subject_id in f:
             subject_id = subject_id.strip()
-            data = get_movie_base_info(subject_id)
+            #data = get_movie_base_info(subject_id)
             try:
                 data = get_movie_base_info(subject_id)
                 #print "{0} {1}" .format(subject_id, data['error'])
                 if data['error'] is not None:
                     movie_info = "{0}\t{1}" .format(subject_id,data['error'])
                 else:
-                    movie_info = "{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}\t{8}" .format(subject_id, 
-                                                data['name'],data['year'], data['region'],
+                    movie_info = "{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}\t{8}\t{9}\t{10}" \
+                                            .format(
+                                                subject_id, 
+                                                data['name'],data['year'], data['ratingValue'],
+                                                data['ratingCount'], data['region'],
                                                 data['language'],data['genre'], data['actor'],
                                                 data['director'],data['imdb_number'])
             except Exception:
@@ -162,7 +165,7 @@ def get_movie_detailed_info(f):
             time.sleep(sleeptime)
             #print movie_info_list
             write_to_file('test.txt', *movie_info_list)
-        head_instruction = "subject_id\t中文名\t年份\t国家\t语言\t类型\t主演\t导演\tIMDB编号"
+        head_instruction = "subject_id\t中文名\t年份\t评分\t评价人数\t国家\t语言\t类型\t主演\t导演\tIMDB编号"
         line_prepender('test.txt', head_instruction)
 
 if __name__ == '__main__':
