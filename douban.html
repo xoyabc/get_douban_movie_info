@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
+    <title>豆瓣电影排行榜</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- HTML5 shim 和 Respond.js 是为了让 IE8 支持 HTML5 元素和媒体查询（media queries）功能 -->
+    <!-- 警告：通过 file:// 协议（就是直接将 html 页面拖拽到浏览器中）访问页面时 Respond.js 不起作用 -->
+    <!--[if lt IE 9]>
+      <script src="https://cdn.bootcss.com/html5shiv/3.7.3/html5shiv.min.js"></script>
+      <script src="https://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+
+  <!-- table start -->
+<h4 class="text-warning">豆瓣本周口碑榜()</h4>
+<table class="table table-hover table-condensed">
+    <tbody class=" col-xs-12 col-md-18">
+        <tr class="success" ><th>Rank</th><th>Movie Name</th></tr>
+	<tr class="info" ><td >1</td><td>无敌破坏王2：大闹互联网</td></tr>
+	<tr class="info" ><td >2</td><td>巴斯特·斯克鲁格斯的歌谣</td></tr>
+	<tr class="info" ><td >3</td><td>无名之辈</td></tr>
+	<tr class="info" ><td >4</td><td>冰淇淋与雨声</td></tr>
+	<tr class="info" ><td >5</td><td>我们，动物</td></tr>
+	<tr class="info" ><td >6</td><td>生活万岁</td></tr>
+	<tr class="info" ><td >7</td><td>黑色1847</td></tr>
+	<tr class="info" ><td >8</td><td>银行家的抵抗</td></tr>
+	<tr class="info" ><td >9</td><td>多甫拉托夫</td></tr>
+	<tr class="info" ><td >10</td><td>白小姐</td></tr>
+    </tbody>
+</table>
+  <h4 id="output" class="text-warning"></h4>
+  <script type="text/javascript">
+      var str="";
+      var time_period_us = str.split(/ /)[0];
+      document.getElementById('output').innerHTML = "豆瓣北美票房榜(" + time_period_us + ")";
+  </script>
+<table class="table table-hover table-condensed">
+    <tbody class=" col-xs-12 col-md-18">
+        <tr class="success" ><th>Rank</th><th>Movie Name</th></tr>
+	<tr class="info" ><td >1</td><td>无敌破坏王2：大闹互联网</td></tr>
+	<tr class="info" ><td >2</td><td>绿毛怪格林奇</td></tr>
+	<tr class="info" ><td >3</td><td>奎迪2</td></tr>
+	<tr class="info" ><td >4</td><td>神奇动物：格林德沃之罪</td></tr>
+	<tr class="info" ><td >5</td><td>波西米亚狂想曲</td></tr>
+	<tr class="info" ><td >6</td><td>速成家庭</td></tr>
+	<tr class="info" ><td >7</td><td>汉娜格蕾丝的着魔</td></tr>
+	<tr class="info" ><td >8</td><td>罗宾汉</td></tr>
+	<tr class="info" ><td >9</td><td>寡妇联盟</td></tr>
+	<tr class="info" ><td >10</td><td>绿皮书</td></tr>
+    </tbody>
+</table>
+</br>
+  <!-- table end -->
+    <!-- jQuery (Bootstrap 的所有 JavaScript 插件都依赖 jQuery，所以必须放在前边) -->
+    <script src="https://cdn.bootcss.com/jquery/1.12.4/jquery.min.js"></script>
+    <!-- 加载 Bootstrap 的所有 JavaScript 插件。你也可以根据需要只加载单个插件。 -->
+    <script src="https://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  </body>
+</html>
