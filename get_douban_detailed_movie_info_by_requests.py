@@ -59,12 +59,13 @@ def get_movie_base_info(subject):
         movie_info['year'] = 'N/A'
     # rating_info
     rating_info = soup.find_all(attrs={'class' : 'rating_sum'})[0].text.strip()
-    # type, name, director, actor, genre, ratingCount, ratingValue
+    # type, name, duration, director, actor, genre, ratingCount, ratingValue
     script_json = soup.find_all(attrs={'type' : 'application/ld+json'})[0].get_text()
     movie_json = json.loads(script_json, strict=False)
     movie_info['type'] = movie_json.get('@type', 'N/A')
     #movie_info['name'] = movie_json.get('name', 'N/A').split()[0]
     movie_info['name'] = re.sub(u' \(豆瓣\)', '' ,soup.title.text.strip())
+    movie_info['duration'] = movie_json.get('duration', 'N/A')
     try:
         director =  movie_json['director'][0].get('name', 'N/A').split()[0]
     except IndexError:
@@ -151,10 +152,11 @@ def get_movie_detailed_info(f):
                 if data['error'] is not None:
                     movie_info = "{0}\t{1}" .format(subject_id,data['error'])
                 else:
-                    movie_info = "{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}\t{8}\t{9}\t{10}\t{11}" \
+                    movie_info = "{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}\t{8}\t{9}\t{10}\t{11}\t{12}" \
                                             .format(
                                                 subject_id,data['type'],
-                                                data['name'],data['year'], data['ratingValue'],
+                                                data['name'],data['year'],data['duration'],
+                                                data['ratingValue'],
                                                 data['ratingCount'], data['region'],
                                                 data['language'],data['genre'], data['actor'],
                                                 data['director'],data['imdb_number'])
@@ -166,7 +168,7 @@ def get_movie_detailed_info(f):
             time.sleep(sleeptime)
             #print movie_info_list
             write_to_file('test.txt', *movie_info_list)
-        head_instruction = "subject_id\ttype\t中文名\t年份\t评分\t评价人数\t国家\t语言\t类型\t主演\t导演\tIMDB编号"
+        head_instruction = "subject_id\ttype\t中文名\t年份\t片长\t评分\t评价人数\t国家\t语言\t类型\t主演\t导演\tIMDB编号"
         line_prepender('test.txt', head_instruction)
 
 if __name__ == '__main__':
