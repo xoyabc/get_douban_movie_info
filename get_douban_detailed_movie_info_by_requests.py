@@ -106,6 +106,8 @@ def get_movie_base_info(subject):
             movie_info['region'] = subject_base_info_list[i+1].string.strip().split('/')[0].replace(" ", "")
         if v.string is not None and '语言:' in v.string:
             movie_info['language'] = subject_base_info_list[i+1].string.strip().split('/')[0].replace(" ", "")
+        else:
+            movie_info['language'] = 'N/A'
         if v.string is not None and 'IMDb链接' in v.string:
             movie_info['imdb_number'] = subject_base_info_list[i+2].string
     '''
