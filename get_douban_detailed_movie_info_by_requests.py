@@ -65,7 +65,10 @@ def get_movie_base_info(subject):
     movie_info['type'] = movie_json.get('@type', 'N/A')
     #movie_info['name'] = movie_json.get('name', 'N/A').split()[0]
     movie_info['name'] = re.sub(u' \(豆瓣\)', '' ,soup.title.text.strip())
-    movie_info['duration'] = movie_json.get('duration', 'N/A')
+    try:
+        movie_info['duration'] = 'N/A' if movie_json['duration'] == '' else movie_json.get('duration', 'N/A')
+    except Exception:
+        movie_info['duration'] = 'N/A' 
     try:
         director =  movie_json['director'][0].get('name', 'N/A').split()[0]
     except IndexError:
@@ -75,7 +78,7 @@ def get_movie_base_info(subject):
     except IndexError:
         actor  = 'N/A'
     try:
-        movie_info['genre'] = movie_json.get('genre', ['N/A'])[0]
+        movie_info['genre'] = "/".join(movie_json.get('genre', ['N/A']))
     except IndexError:
         movie_info['genre']  = 'N/A'
     ratingValue = movie_json['aggregateRating']['ratingValue']
@@ -145,7 +148,7 @@ def get_movie_detailed_info(f):
         movie_info_list = []
         for subject_id in f:
             subject_id = subject_id.strip()
-            #data = get_movie_base_info(subject_id)
+            data = get_movie_base_info(subject_id)
             try:
                 data = get_movie_base_info(subject_id)
                 #print "{0} {1}" .format(subject_id, data['error'])
