@@ -78,7 +78,7 @@ def get_movie_base_info(subject):
     except IndexError:
         actor  = 'N/A'
     try:
-        movie_info['genre'] = "/".join(movie_json.get('genre', ['N/A']))
+        movie_info['genre'] = 'N/A' if len(movie_json.get('genre')) < 1 else "/".join(movie_json.get('genre', ['N/A']))
     except IndexError:
         movie_info['genre']  = 'N/A'
     ratingValue = movie_json['aggregateRating']['ratingValue']
