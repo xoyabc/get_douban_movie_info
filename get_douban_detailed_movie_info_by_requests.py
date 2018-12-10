@@ -78,7 +78,7 @@ def get_movie_base_info(subject):
     except IndexError:
         actor  = 'N/A'
     try:
-        movie_info['genre'] = "/".join(movie_json.get('genre', ['N/A']))
+        movie_info['genre'] = 'N/A' if len(movie_json.get('genre')) < 1 else "/".join(movie_json.get('genre', ['N/A']))
     except IndexError:
         movie_info['genre']  = 'N/A'
     ratingValue = movie_json['aggregateRating']['ratingValue']
@@ -101,6 +101,9 @@ def get_movie_base_info(subject):
         cast = 'N/A'
     #duration = subuject_info_result.find('span', attrs={"property": "v:runtime"}).text.replace(' ', '')
     subject_base_info_list = subuject_info_result.contents
+    # init language and imdb_number in case the corresponding key does not exist
+    movie_info['language'] = 'N/A'
+    movie_info['imdb_number'] = 'N/A'
     for i,v in enumerate(subject_base_info_list):
         if v.string is not None and '制片国家/地区:' in v.string:
             movie_info['region'] = subject_base_info_list[i+1].string.strip().split('/')[0].replace(" ", "")
