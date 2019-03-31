@@ -86,7 +86,7 @@ def serach_movie(movie_name,movie_year):
 with open('movie.name_year','rU') as f:
     for line in f:
         movie_info = line.strip()
-        p = re.compile(r'^(.*)\.([0-9]{4})\..*$')
+        p = re.compile(r'^(.*)\.([0-9]{4})\.?.*$')
         match_obj = p.match(movie_info)
         if match_obj is not None:
             movie_name = match_obj.group(1)
