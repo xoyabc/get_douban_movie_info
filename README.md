@@ -1,6 +1,7 @@
 <!--ts-->
    * [get_douban_movie_info](#get_douban_movie_info)
       * [douban_traverse_movies_link.py](#douban_traverse_movies_linkpy)
+      * [get_movie_info_from_douban.sh](#get_movie_info_from_doubansh)
       * [get_chn_name_from_eng_movie_name_by_douban.py](#get_chn_name_from_eng_movie_name_by_doubanpy)
          * [使用方法](#使用方法)
       * [get_douban_comment_score_and_number_by_name.py](#get_douban_comment_score_and_number_by_namepy)
@@ -9,8 +10,9 @@
       * [get_douban_detailed_movie_info_using_api.rhilip.info.py](#get_douban_detailed_movie_info_using_apirhilipinfopy)
       * [test_douban_api.py](#test_douban_apipy)
       * [to_do](#to_do)
+      * [REF：](#ref)
 
-<!-- Added by: root, at: 2018-11-16T02:06+0800 -->
+<!-- Added by: root, at: 2019-04-01T02:58+0800 -->
 
 <!--te-->
 # get_douban_movie_info
@@ -45,6 +47,9 @@ url: https://movie.douban.com/subject/25849049/ title: 超人总动员2
 url: https://movie.douban.com/subject/26683421/ title: 特工
 url: https://movie.douban.com/subject/26972258/ title: 江湖儿女
 ```
+## get_movie_info_from_douban.sh
+
+调用豆瓣v2接口获取影片类别、年份、主演、导演及subject_id
 
 ## get_chn_name_from_eng_movie_name_by_douban.py
 
