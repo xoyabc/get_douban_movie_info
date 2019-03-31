@@ -71,7 +71,7 @@ def serach_movie(movie_name,movie_year):
 with open('movie.name','rU') as f:
     for line in f:
         movie_info = line.strip()
-        p = re.compile(r'^(.*)\.([0-9]{4})\..*$')
+        p = re.compile(r'^(.*)\.([0-9]{4})\.?.*$')
         match_obj = p.match(movie_info)
         if match_obj is not None:
             movie_name = match_obj.group(1)
@@ -83,7 +83,8 @@ with open('movie.name','rU') as f:
                 movie_name = re.sub(r'([0-9]{4})', '' ,movie_name)
             movie_year = ''
         data = serach_movie(movie_name,movie_year)
-        print "{0};{1};{2};{3};{4}" .format(data['name'], data['chn_title'], data['year'],
+        #print "{0};{1};{2};{3};{4}" .format(data['name'], data['chn_title'], data['year'],
+        print "[{0}][{1}][{2}][{3}][{4}]" .format(data['name'], data['chn_title'], data['year'],
                                             data['rating_score'], data['rating_total_nums'])
         sleeptime = random.uniform(0, 5)
         sleeptime = Decimal(sleeptime).quantize(Decimal('0.00'))
