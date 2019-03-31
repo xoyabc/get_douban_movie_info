@@ -52,6 +52,9 @@ url: https://movie.douban.com/subject/25849049/ title: 超人总动员2
 url: https://movie.douban.com/subject/26683421/ title: 特工
 url: https://movie.douban.com/subject/26972258/ title: 江湖儿女
 ```
+## get_movie_info_from_douban.sh
+
+调用豆瓣v2接口获取影片类别、年份、主演、导演及subject_id
 
 ## get_chn_name_from_eng_movie_name_by_douban.py
 
