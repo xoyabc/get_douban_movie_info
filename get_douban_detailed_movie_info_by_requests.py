@@ -58,7 +58,10 @@ def get_movie_base_info(subject):
     except IndexError:
         movie_info['year'] = 'N/A'
     # rating_info
-    rating_info = soup.find_all(attrs={'class' : 'rating_sum'})[0].text.strip()
+    try:
+        rating_info = soup.find_all(attrs={'class' : 'rating_sum'})[0].text.strip()
+    except IndexError:
+        rating_info = "无评分项"
     # type, name, duration, director, actor, genre, ratingCount, ratingValue
     script_json = soup.find_all(attrs={'type' : 'application/ld+json'})[0].get_text()
     movie_json = json.loads(script_json, strict=False)
@@ -151,10 +154,10 @@ def get_movie_detailed_info(f):
         movie_info_list = []
         for subject_id in f:
             subject_id = subject_id.strip()
-            data = get_movie_base_info(subject_id)
+            #data = get_movie_base_info(subject_id)
             try:
                 data = get_movie_base_info(subject_id)
-                #print "{0} {1}" .format(subject_id, data['error'])
+                print "{0} {1}" .format(subject_id, data['error'])
                 if data['error'] is not None:
                     movie_info = "{0}\t{1}" .format(subject_id,data['error'])
                 else:
