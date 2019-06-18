@@ -12,16 +12,6 @@
       * [test_douban_api.py](#test_douban_apipy)
       * [to_do](#to_do)
       * [REF：](#ref)
-
-<<<<<<< HEAD
-<!-- Added by: root, at: 2019-04-01T02:58+0800 -->
-=======
-!! # TOC was added into: 'README.md'
-!! # Origin version of the file: 'README.md.orig.2019-04-01_025846'
-!! # TOC added into a separate file: 'README.md.toc.2019-04-01_025846'
-<!-- Added by: root, at: 2018-11-16T02:06+0800 -->
->>>>>>> d665dba28e062080b6ae6fe3ee13b6694a71f075
-
 <!--te-->
 
 # get_douban_movie_info
