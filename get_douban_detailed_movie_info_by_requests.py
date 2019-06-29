@@ -6,6 +6,8 @@ import urllib
 import requests
 import random
 import json
+import csv
+import codecs
 from bs4 import BeautifulSoup  
 from urllib import unquote
 from decimal import Decimal
@@ -13,16 +15,17 @@ import time
 reload(sys)
 sys.setdefaultencoding("utf-8")
 
-# write to result file
-def write_to_file(file, *info_list):
-    with open(file, 'w')  as f:
-        f.writelines(str(line) + "\n" for line in info_list)
-# insert fisrt line
-def line_prepender(filename, line):
-    with open(filename, 'r+') as f:
-        content = f.read()
-        f.seek(0, 0)
-        f.write(line.rstrip('\r\n') + '\n' + content)
+
+# write to csv file
+def write_to_csv(filename, head_line, *info_list):
+    with open(filename, 'w') as f:
+        f.write(codecs.BOM_UTF8)
+        writer = csv.writer(f)
+        writer.writerow(head_line.split('\t'))
+        for row in info_list:
+            row_list = row.split('\t')
+            writer.writerow(row_list)
+
 
 def get_movie_base_info(subject):
     # header content
@@ -157,7 +160,7 @@ def get_movie_detailed_info(f):
             #data = get_movie_base_info(subject_id)
             try:
                 data = get_movie_base_info(subject_id)
-                print "{0} {1}" .format(subject_id, data['error'])
+                # print "{0} {1}" .format(subject_id, data['error'])
                 if data['error'] is not None:
                     movie_info = "{0}\t{1}" .format(subject_id,data['error'])
                 else:
@@ -172,15 +175,18 @@ def get_movie_detailed_info(f):
             except Exception:
                 movie_info = "{0}\tinternal_running_error" .format(subject_id)
             movie_info_list.append(movie_info)
+            # print movie_info_list
             sleeptime = random.uniform(0, 2)
             sleeptime = Decimal(sleeptime).quantize(Decimal('0.00'))
             time.sleep(sleeptime)
-            #print movie_info_list
-            write_to_file('test.txt', *movie_info_list)
-        head_instruction = "subject_id\ttype\t中文名\t年份\t片长\t评分\t评价人数\t国家\t语言\t类型\t主演\t导演\tIMDB编号"
-        line_prepender('test.txt', head_instruction)
+    return movie_info_list
+
 
 if __name__ == '__main__':
     movie_info = {}
+    # douban movie subject id
     f = 'movie.list'
-    get_movie_detailed_info(f)
+    f_csv = 'movie.csv'
+    head_instruction = "subject_id\ttype\t中文名\t年份\t片长\t评分\t评价人数\t国家\t语言\t类型\t主演\t导演\tIMDB编号"
+    movie_info_list = get_movie_detailed_info(f)
+    write_to_csv(f_csv, head_instruction, *movie_info_list)
