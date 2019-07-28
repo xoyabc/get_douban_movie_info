@@ -13,7 +13,7 @@ reload(sys)
 sys.setdefaultencoding("utf-8")
 
 
-def serach_movie(movie_name,movie_year):
+def search_movie(movie_name,movie_year):
     # header content
     douban_headers = {
          'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.81 Safari/537.36',
@@ -86,7 +86,7 @@ with open('movie.name','rU') as f:
             if re.search("\.", movie_name):
                 movie_name = re.sub(r'([0-9]{4})', '' ,movie_name)
             movie_year = ''
-        data = serach_movie(movie_name,movie_year)
+        data = search_movie(movie_name,movie_year)
         #print "{0};{1};{2};{3};{4}" .format(data['name'], data['chn_title'], data['year'],
         print "{:<10}[{}][{}][{}][{}][{}]" .format(data['subject_id'], data['name'], data['chn_title'], 
                                             data['year'],
