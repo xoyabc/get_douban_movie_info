@@ -69,6 +69,7 @@ def search_movie(movie_name,movie_year):
                 data['year'] = year
                 data['rating_score'] = rating_score
                 data['rating_total_nums'] = rating_total_nums
+                break
             else:
                 continue
     #print data
@@ -77,7 +78,7 @@ def search_movie(movie_name,movie_year):
 with open('movie.name','rU') as f:
     for line in f:
         movie_info = line.strip()
-        p = re.compile(r'^(.*)[\.| |\s]?([0-9]{4})\.?.*$')
+        p = re.compile(r'^(.*?)[\.| |\s]?([0-9]{4})\.?.*$')
         match_obj = p.match(movie_info)
         if match_obj is not None:
             movie_name = match_obj.group(1)
