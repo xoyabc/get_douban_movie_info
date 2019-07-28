@@ -14,13 +14,13 @@
       * [REF：](#ref)
 <!--te-->
 
-# get_douban_movie_info
+# get_douban_movie_info(已失效)
 
 获取豆瓣电影条目信息
 
 搬自：https://github.com/atom210/douban_api_test
 
-## douban_traverse_movies_link.py
+## douban_traverse_movies_link.py(已失效)
 
 获取某年某月热门影片，修改`rst_list = movie_links_range(2018, 10);`中的年月即可。
 ``` bash
@@ -46,9 +46,10 @@ url: https://movie.douban.com/subject/25849049/ title: 超人总动员2
 url: https://movie.douban.com/subject/26683421/ title: 特工
 url: https://movie.douban.com/subject/26972258/ title: 江湖儿女
 ```
-## get_movie_info_from_douban.sh
+## get_movie_info_from_douban.sh(已失效)
 
-调用豆瓣v2接口获取影片类别、年份、主演、导演及subject_id
+调用豆瓣v2接口获取影片类别、年份、主演、导演及subject_id。 ~~由于豆瓣v2 API失效，该脚本已不可用2019-07-28~~
+
 
 ## get_chn_name_from_eng_movie_name_by_douban.py
 
@@ -129,7 +130,7 @@ subject_id      中文名  年份    国家    语言    类型    主演    导
 调用`R酱`的接口获取，这里就不再说了，接口介绍文档超详细。
 https://github.com/Rhilip/PT-help/blob/master/modules/infogen/README.md
 
-## test_douban_api.py
+## test_douban_api.py(已失效)
 
 搬自：https://github.com/atom210/douban_api_test
 
@@ -156,8 +157,9 @@ actors : 伊莱贾·伍德, 詹妮弗·康纳利, 约翰·C·赖利, 克里斯�
 ```
 ## to_do
 
-- [ ] 获取IMDB评价人数
-- [ ] 获取IMDB评分
+- [x] 获取IMDB评价人数
+- [x] 获取IMDB评分
+- [ ] 生成excel
 
 
 ## REF：
@@ -167,3 +169,4 @@ actors : 伊莱贾·伍德, 詹妮弗·康纳利, 约翰·C·赖利, 克里斯�
 - [PT-help](https://github.com/Rhilip/PT-help/blob/master/modules/infogen/README.md)
 
 - [Get movie url link](https://gist.github.com/xoyabc/6961eecc7ccf1c481f5cf31b3ec02aa3)
+- [豆瓣 v2 API 失效](https://github.com/DIYgod/RSSHub/issues/2221)
