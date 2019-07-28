@@ -48,7 +48,8 @@ url: https://movie.douban.com/subject/26972258/ title: 江湖儿女
 ```
 ## get_movie_info_from_douban.sh
 
-调用豆瓣v2接口获取影片类别、年份、主演、导演及subject_id
+调用豆瓣v2接口获取影片类别、年份、主演、导演及subject_id。 ~~由于豆瓣v2 API失效，该脚本已不可用2019-07-28~~
+
 
 ## get_chn_name_from_eng_movie_name_by_douban.py
 
@@ -167,3 +168,4 @@ actors : 伊莱贾·伍德, 詹妮弗·康纳利, 约翰·C·赖利, 克里斯�
 - [PT-help](https://github.com/Rhilip/PT-help/blob/master/modules/infogen/README.md)
 
 - [Get movie url link](https://gist.github.com/xoyabc/6961eecc7ccf1c481f5cf31b3ec02aa3)
+- [豆瓣 v2 API 失效](https://github.com/DIYgod/RSSHub/issues/2221)
