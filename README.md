@@ -170,6 +170,8 @@ actors : 伊莱贾·伍德, 詹妮弗·康纳利, 约翰·C·赖利, 克里斯�
 - [x] 获取IMDB评价人数
 - [x] 获取IMDB评分
 - [ ] 生成excel
+- [ ] 上映日期，可参考 [gen.py](https://github.com/BFDZ/PT-Gen/blob/master/infogen/gen.py)
+- [ ] 获奖情况，可参考 [gen.py](https://github.com/BFDZ/PT-Gen/blob/master/infogen/gen.py)
 
 
 ## REF：
