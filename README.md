@@ -137,6 +137,11 @@ https://github.com/Rhilip/PT-help/blob/master/modules/infogen/README.md
 
 ## test_douban_api.py(已失效)
 
+```
+// 2019-09-25 换用apikey方式，仍可以使用
+http://api.douban.com/v2/movie/subject/24751756?apikey=0dad551ec0f84ed02907ff5c42e8ec70
+```
+
 搬自：https://github.com/atom210/douban_api_test
 
 使用豆瓣V2版本API`http://api.douban.com/v2/movie/subject/24751756`获取影片信息。
