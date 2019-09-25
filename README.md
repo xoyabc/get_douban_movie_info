@@ -50,6 +50,11 @@ url: https://movie.douban.com/subject/26972258/ title: 江湖儿女
 
 调用豆瓣v2接口获取影片类别、年份、主演、导演及subject_id。 ~~由于豆瓣v2 API失效，该脚本已不可用2019-07-28~~
 
+// 2019-09-25 换用apikey方式，仍可以使用
+```shell
+https://api.douban.com/v2/movie/search?apikey=0dad551ec0f84ed02907ff5c42e8ec70&q=%E6%96%AF%E7%A7%91%E6%99%AE%E9%87%8C%E7%9A%84%E8%A7%A3%E6%94%BE
+```
+
 
 ## get_chn_name_from_eng_movie_name_by_douban.py
 
