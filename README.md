@@ -50,7 +50,7 @@ url: https://movie.douban.com/subject/26683421/ title: 特工
 url: https://movie.douban.com/subject/26972258/ title: 江湖儿女
 ```
 ## get_movie_info_from_douban.sh
-调用豆瓣v2搜索接口，搜索片名获取影片类别、年份、主演、导演及subject_id。 ~~由于豆瓣v2 API失效，该脚本已不可用2019-07-28~~
+调用豆瓣v2搜索接口，根据片名获取影片类别、年份、主演、导演及subject_id。 ~~由于豆瓣v2 API失效，该脚本已不可用2019-07-28~~
 
 // 2019-09-25 换用apikey方式，仍可以使用
 ```shell
