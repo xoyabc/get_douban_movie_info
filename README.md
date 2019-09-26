@@ -14,7 +14,7 @@
       * [REF：](#ref)
 <!--te-->
 
-# get_douban_movie_info(已失效)
+## get_douban_movie_info(已失效)
 
 获取豆瓣电影条目信息
 
@@ -165,6 +165,14 @@ ratings_count : 61806
 country : 美国
 actors : 伊莱贾·伍德, 詹妮弗·康纳利, 约翰·C·赖利, 克里斯托弗·普卢默
 ```
+
+## 可用查询接口
+
+```
+https://movie.douban.com/j/subject_suggest?q=老炮    # 只能精确搜索片名，该地址为豆瓣智能推荐接口
+https://www.douban.com/search?cat=1002&q=老炮 2015   # 可使用片名+年份
+```
+
 ## to_do
 
 - [x] 获取IMDB评价人数
