@@ -20,6 +20,7 @@ RATING_NUM="${TEMP_DIR}/rating_num"
 
 RESULT_FILE="top250_movies.csv"
 
+[ -f ${TEMP_DIR} ] && mv ${TEMP_DIR} ${TEMP_DIR}.bak
 [ ! -d ${TEMP_DIR} ] && mkdir ${TEMP_DIR}
 >${URL} && >${NAME} && >${YEAR} && >${REGION} && >${GENRE} && >${DIRECTOR} && >${RATING_SCORE} && >${RATING_NUM}
 
