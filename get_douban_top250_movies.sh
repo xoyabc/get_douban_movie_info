@@ -7,6 +7,9 @@
 # * Description   : get douban top 250 movies info
 # **********************************************************
 
+export LC_ALL='en_US.utf8'
+export LANG='en_US.utf8'
+
 TEMP_DIR="temp"
 TEMP_MV_INFO="douban_mv_info"
 URL="${TEMP_DIR}/url"
@@ -25,7 +28,8 @@ RESULT_FILE="top250_movies.csv"
 >${URL} && >${NAME} && >${YEAR} && >${REGION} && >${GENRE} && >${DIRECTOR} && >${RATING_SCORE} && >${RATING_NUM}
 
 # 循环遍历
-for i in $(seq 0 25 225)
+for i in $(seq 0 25 25)
+#for i in $(seq 0 25 225)
 do
 	link="https://movie.douban.com/top250?start=${i}&filter="
 	# 将页面保存到临时文件中
@@ -62,4 +66,4 @@ done
 paste -d ',' ${NAME} ${YEAR} ${REGION} ${GENRE} ${DIRECTOR} ${RATING_SCORE} ${RATING_NUM} ${URL} > ${RESULT_FILE}
 # 添加表头
 sed -i '1i 片名,年份,制片国家/地区,类型,导演,评分,评价人数,链接' ${RESULT_FILE}
-iconv -f utf8 -t gb18030 ${RESULT_FILE} -o ${RESULT_FILE}
+/usr/bin/iconv -f utf8 -t gb18030 ${RESULT_FILE} -o ${RESULT_FILE}
