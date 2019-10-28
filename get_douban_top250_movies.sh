@@ -28,8 +28,7 @@ RESULT_FILE="top250_movies.csv"
 >${URL} && >${NAME} && >${YEAR} && >${REGION} && >${GENRE} && >${DIRECTOR} && >${RATING_SCORE} && >${RATING_NUM}
 
 # 循环遍历
-for i in $(seq 0 25 25)
-#for i in $(seq 0 25 225)
+for i in $(seq 0 25 225)
 do
 	link="https://movie.douban.com/top250?start=${i}&filter="
 	# 将页面保存到临时文件中
