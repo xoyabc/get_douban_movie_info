@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 # -*- coding:utf-8 -*-
-import re  
-import sys  
-import urllib  
+import re 
+import sys
+import urllib
 import requests
 import random
 from bs4 import BeautifulSoup  
@@ -25,13 +25,18 @@ def search_movie(movie_name,movie_year):
          'HOST': 'www.douban.com',
          'Cookie': 'iv5LdR0AXBc'
     }
+
     
     #url_link = 'https://www.douban.com/search?cat=1002&q=B.A.Pass.2013'
     url_link = 'https://www.douban.com/search?cat=1002&q={0} {1}' .format(movie_name,movie_year)
     r = requests.get(url_link, headers=douban_headers)
+    #print r.status_code
     douban_headers['Cookie'] = r.cookies
     soup = BeautifulSoup(r.text.encode('utf-8'), 'lxml')
-    all_subuject_result = soup.find_all(attrs={'class' : 'result'})[0:3]
+    if movie_year == '':
+        all_subuject_result = soup.find_all(attrs={'class' : 'result'})[0:1]
+    else:
+        all_subuject_result = soup.find_all(attrs={'class' : 'result'})[0:3]
     data = {}
     data['name'] = movie_name
     data['chn_title'] = 'Not found in douban'
@@ -44,12 +49,17 @@ def search_movie(movie_name,movie_year):
         for result in all_subuject_result:
             #print result
             title = result.find_all(attrs={'class' : 'title'})[0]
+            # movie title info
+            chn_title = title.h3.a.text.strip()
+            # movie year
             year = title.find_all(attrs={'class' : 'subject-cast'})[0].text.split('原名:')[1].split('/')[-1].replace(' ','')
-            year_minus = abs(int(movie_year)-int(year))
-            if year_minus <= 2:
+            #print ("movie_year:{}" .format(movie_year))
+            #print ("year:{}" .format(year))
+            year_minus = abs(int(movie_year)-int(year)) if movie_year != '' else 3
+            #if year_minus <= 1 and movie_name == chn_title:
+            if year_minus <= 2 or movie_year == '':
+                # movie rating, link, subject_id
                 rating_info = result.find_all(attrs={'class' : 'rating-info'})[0]
-                # movie title info
-                chn_title = title.h3.a.text.strip()
                 link = title.h3.a['href']
                 link_decode = unquote(link)
                 link = re.match(r'^.*url=(.*?)&query=.*$', link_decode).group(1)
@@ -72,7 +82,6 @@ def search_movie(movie_name,movie_year):
                 break
             else:
                 continue
-    #print data
     return data
 
 with open('movie.name','rU') as f:

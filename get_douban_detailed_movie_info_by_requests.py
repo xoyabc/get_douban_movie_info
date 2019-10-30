@@ -176,7 +176,8 @@ def get_movie_detailed_info(f):
                 movie_info = "{0}\tinternal_running_error" .format(subject_id)
             movie_info_list.append(movie_info)
             # print movie_info_list
-            sleeptime = random.uniform(0, 2)
+            #sleeptime = random.uniform(0, 2)
+            sleeptime = random.uniform(0, 3)
             sleeptime = Decimal(sleeptime).quantize(Decimal('0.00'))
             time.sleep(sleeptime)
     return movie_info_list

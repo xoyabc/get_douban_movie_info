@@ -43,8 +43,8 @@ def serach_movie(movie_name,movie_year):
             original_name = title.find_all(attrs={'class' : 'subject-cast'})[0].text.split('原名:')[1].split('/')[0]
             original_name_format = re.sub(r'(\s+|·|\·|\.|:|-|,|\&|\s+$)', '', original_name).replace('·', '').lower()
             link = title.h3.a['href']
-            link = re.match(r'^.*url=(.*?)&query=.*$', link).group(1)
             link = unquote(link)
+            link = re.match(r'^.*url=(.*?)&query=.*$', link).group(1)
             year = title.find_all(attrs={'class' : 'subject-cast'})[0].text.split('原名:')[1].split('/')[-1].replace(' ','')
             # movie rating info
             rating_total_nums = rating_info.find_all('span', attrs={"class": None})[0].text
@@ -86,7 +86,7 @@ def serach_movie(movie_name,movie_year):
 with open('movie.name_year','rU') as f:
     for line in f:
         movie_info = line.strip()
-        p = re.compile(r'^(.*)\.([0-9]{4})\.?.*$')
+        p = re.compile(r'^(.*)[\.| |\s]?([0-9]{4})\.?.*$')
         match_obj = p.match(movie_info)
         if match_obj is not None:
             movie_name = match_obj.group(1)

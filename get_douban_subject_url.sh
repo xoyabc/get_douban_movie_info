@@ -1,9 +1,9 @@
 #!/bin/bash
 
 > douban_subjects
-doulist_id="116273530"
+doulist_id="817584"
 
-for i in $(seq 0 25 25)
+for i in $(seq 0 25 100)
 do
     # douban tag
     # curl -s "https://movie.douban.com/tag/2018?start=${i}&type=T" -A  'Mozilla/5.0 (Windows NT 6.1; Win64; x64)' |pup '.nbg attr{href}' >> douban_subjects
