@@ -54,6 +54,19 @@ def get_movie_base_info(subject):
     if re.search(u'你想访问的页面不存在', soup.prettify()):
         movie_info['error'] = 'movie_not_found'
         return movie_info
+    # get release date
+    pattern = re.compile(r'(?P<r_date>.*)\((?P<r_region>.*)\)')
+    release_date = r_date = r_region = None
+    try:
+        for date in soup.select('span[property="v:initialReleaseDate"]'):
+            r_date = pattern.search(date.text).group('r_date')
+            r_region = pattern.search(date.text).group('r_region').encode('utf-8')
+            #print r_region, r_date
+            if '中国大陆'.decode('utf-8').encode("utf-8") in r_region:
+                release_date = r_date
+    except:
+        pass
+    movie_info['release_date'] = release_date
     # year
     try:
         soup_year = soup.h1.find_all('span', attrs={"class": "year"})[0].text
@@ -164,12 +177,13 @@ def get_movie_detailed_info(f):
                 if data['error'] is not None:
                     movie_info = "{0}\t{1}" .format(subject_id,data['error'])
                 else:
-                    movie_info = "{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}\t{8}\t{9}\t{10}\t{11}\t{12}" \
+                    movie_info = "{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}\t{8}\t{9}\t{10}\t{11}\t{12}\t{13}" \
                                             .format(
                                                 subject_id,data['type'],
                                                 data['name'],data['year'],data['duration'],
                                                 data['ratingValue'],
                                                 data['ratingCount'], data['region'],
+                                                data['release_date'],
                                                 data['language'],data['genre'], data['actor'],
                                                 data['director'],data['imdb_number'])
             except Exception:
@@ -188,6 +202,6 @@ if __name__ == '__main__':
     # douban movie subject id
     f = 'movie.list'
     f_csv = 'movie.csv'
-    head_instruction = "subject_id\ttype\t中文名\t年份\t片长\t评分\t评价人数\t国家\t语言\t类型\t主演\t导演\tIMDB编号"
+    head_instruction = "subject_id\ttype\t中文名\t年份\t片长\t评分\t评价人数\t国家\t上映日期(中国大陆)\t语言\t类型\t主演\t导演\tIMDB编号"
     movie_info_list = get_movie_detailed_info(f)
     write_to_csv(f_csv, head_instruction, *movie_info_list)
