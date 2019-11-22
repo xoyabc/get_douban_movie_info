@@ -179,8 +179,8 @@ https://www.douban.com/search?cat=1002&q=老炮 2015   # 可使用片名+年份
 
 - [x] 获取IMDB评价人数
 - [x] 获取IMDB评分
-- [ ] 生成excel
-- [ ] 上映日期，可参考 [gen.py](https://github.com/BFDZ/PT-Gen/blob/master/infogen/gen.py)
+- [x] 生成excel (最后还是生成了csv)
+- [x] 上映日期，可参考 [gen.py](https://github.com/BFDZ/PT-Gen/blob/master/infogen/gen.py)
 - [ ] 获奖情况，可参考 [gen.py](https://github.com/BFDZ/PT-Gen/blob/master/infogen/gen.py)
 
 
