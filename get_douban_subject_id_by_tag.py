@@ -12,7 +12,6 @@ urllib3.disable_warnings()
 
 url = "https://movie.douban.com/j/new_search_subjects"
 subject_list = []
-#num = 0
 
 
 douban_headers = {
@@ -26,31 +25,36 @@ douban_headers = {
      'Cookie': 'iv5LdR0AXBc'
 }
 
-
+# write the list to result file
 def write_to_file(file, *info_list):
     with open(file, 'w')  as f:
         f.writelines(str(line) + "\n" for line in info_list)
 
 
-def get_subject(start, end):
+# get douban subject
+def get_subject(tag, start, end):
     while start <= end:
         print (start)
         payload = {
         'sort': 'T',
         'range': '0,10',
-        'tags': '1989',
+        'tags': tag,
         'start': start,
         }
-        resp = requests.get(url, params=payload, headers=douban_headers, verify=False)
-        json_data= resp.json()['data']
-        
-        for item in json_data:
-            subject_list.append(item['id'])
-            print (item['id'])
-        time.sleep(1 + random.randint(5, 10))
+        try:
+            resp = requests.get(url, params=payload, headers=douban_headers, verify=False)
+            json_data= resp.json()['data']
+            
+            for item in json_data:
+                subject_list.append(item['id'])
+                print (item['id'])
+        except Exception as e:
+            print(e)
+        time.sleep(1 + random.randint(5, 15))
         start += 20
     return subject_list
 
+
 if __name__ == '__main__':
-    subject_list = get_subject(0, 20)
+    subject_list = get_subject('2019', 2100, 3980)
     write_to_file('douban_subjects', *subject_list)
