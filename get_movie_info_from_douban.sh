@@ -13,7 +13,9 @@ do
     movie_name_urlencode=$(echo "${movie}" |tr -d '\n' | xxd -plain | sed 's/\(..\)/%\1/g')
     echo ${movie_name_urlencode}
     #query_url="https://api.douban.com/v2/movie/search?q=${movie_name_urlencode}"
-    query_url="https://douban-api.now.sh/v2/movie/search?q=${movie_name_urlencode}"
+    #query_url="https://douban-api.now.sh/v2/movie/search?q=${movie_name_urlencode}"
+    query_url="https://api.douban.com/v2/movie/search?apikey=0dad551ec0f84ed02907ff5c42e8ec70&q=${movie_name_urlencode}"
+
     curl -s ${query_url} > douban_api_info
     total=$(cat douban_api_info |jq -r '.total')
     if [ ${total} -gt 0 ]

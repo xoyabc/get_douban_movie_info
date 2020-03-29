@@ -50,11 +50,11 @@ def get_subject(tag, start, end):
                 print (item['id'])
         except Exception as e:
             print(e)
-        time.sleep(1 + random.randint(5, 15))
+        time.sleep(1 + random.randint(35, 60))
         start += 20
     return subject_list
 
 
 if __name__ == '__main__':
-    subject_list = get_subject('2019', 2100, 3980)
+    subject_list = get_subject('2019', 0, 8000)
     write_to_file('douban_subjects', *subject_list)
