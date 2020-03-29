@@ -165,6 +165,11 @@ country : 美国
 actors : 伊莱贾·伍德, 詹妮弗·康纳利, 约翰·C·赖利, 克里斯托弗·普卢默
 ```
 
+## get_douban_subject_id_by_tag.py
+
+根据标签选影片
+
+
 ## 可用查询接口
 
 ```
