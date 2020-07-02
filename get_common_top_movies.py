@@ -25,7 +25,6 @@ def get_dbid_from_csv(filename, rowname):
 # 使用递归获取共同影片
 def get_common_data(l1, *info_list): 
     for l in info_list: 
-        print (l)
         common_list = [] 
         for i in l:
             if len(list(filter(lambda x: x == i, l1))) > 0:
@@ -81,8 +80,9 @@ def search_movie(db_file, new_file, *info_list):
             write_to_csv(new_file, head_line, *l)
 
 if __name__ == '__main__':
+    MOVIE_LISTS=[]
     LIST_DB= get_dbid_from_csv('07_Douban_top250_movies.csv', '链接')
-    print (LIST_DB)
     LIST_IMDB= get_dbid_from_csv('01_IMDbtop250.csv', 'dbid')
-    common_movies = get_common_data(LIST_IMDB, LIST_DB)
+    MOVIE_LISTS.append(LIST_DB)
+    common_movies = get_common_data(LIST_IMDB, *MOVIE_LISTS)
     search_movie('00_all_movies.csv', 'common_movies.csv', *common_movies)
