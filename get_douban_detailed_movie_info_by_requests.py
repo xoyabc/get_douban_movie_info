@@ -44,14 +44,12 @@ def get_movie_base_info(subject):
     #url_link = 'https://movie.douban.com/subject/1296500'
     # request douban
     r = requests.get(url_link, headers=douban_headers)
-    print r.status_code
     if r.status_code == 200:
         movie_info['error'] = None
     else:
         movie_info['error'] = 'request error'
     # store the html data to soup
     soup = BeautifulSoup(r.text.encode('utf-8'), 'lxml')
-    print soup
     # deal with page not found
     if re.search(u'你想访问的页面不存在', soup.prettify()):
         movie_info['error'] = 'movie_not_found'
@@ -87,7 +85,7 @@ def get_movie_base_info(subject):
     #movie_info['name'] = movie_json.get('name', 'N/A').split()[0]
     movie_info['name'] = re.sub(u' \(豆瓣\)', '' ,soup.title.text.strip())
     try:
-        movie_info['duration'] = 'N/A' if movie_json['duration'] == '' else movie_json.get('duration', 'N/A')
+        movie_info['duration'] = 'N/A' if movie_json['duration'] == '' else movie_json.get('duration', 'N/A').replace('PT', '')
     except Exception:
         movie_info['duration'] = 'N/A' 
     try:
@@ -172,7 +170,7 @@ def get_movie_detailed_info(f):
         movie_info_list = []
         for subject_id in f:
             subject_id = subject_id.strip()
-            data = get_movie_base_info(subject_id)
+            #data = get_movie_base_info(subject_id)
             try:
                 data = get_movie_base_info(subject_id)
                 # print "{0} {1}" .format(subject_id, data['error'])
