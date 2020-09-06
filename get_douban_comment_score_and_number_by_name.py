@@ -5,12 +5,25 @@ import sys
 import urllib
 import requests
 import random
+import csv
+import codecs
 from bs4 import BeautifulSoup  
 from urllib import unquote
 from decimal import Decimal
 import time
 reload(sys)
 sys.setdefaultencoding("utf-8")
+
+
+# write to csv file
+def write_to_csv(filename, head_line, *info_list):
+    with open(filename, 'w') as f:
+        f.write(codecs.BOM_UTF8)
+        writer = csv.writer(f)
+        writer.writerow(head_line.split('\t'))
+        for row in info_list:
+            row_list = row.split('\t')
+            writer.writerow(row_list)
 
 
 def search_movie(movie_name,movie_year):
@@ -66,7 +79,7 @@ def search_movie(movie_name,movie_year):
                 subject_id = re.match(r'^.*url=(https://movie.douban.com/subject/)?([0-9]+)/&query=.*$', link_decode).group(2)
                 # movie rating info
                 rating_total_nums = rating_info.find_all('span', attrs={"class": None})[0].text
-                rating_total_nums = re.sub(r'(\(|\))', '', rating_total_nums)
+                rating_total_nums = re.sub(r'(\(|\))', '', rating_total_nums).replace('人评价','')
                 if rating_total_nums and '暂无评分' not in rating_total_nums and '尚未' not in rating_total_nums:
                     rating_score = rating_info.find_all('span', attrs={"class": "rating_nums"})[0].text
                 else:
@@ -84,26 +97,42 @@ def search_movie(movie_name,movie_year):
                 continue
     return data
 
-with open('movie.name','rU') as f:
-    for line in f:
-        movie_info = line.strip()
-        p = re.compile(r'^(.*?)[\.| |\s]?([0-9]{4})\.?.*$')
-        match_obj = p.match(movie_info)
-        if match_obj is not None:
-            movie_name = match_obj.group(1)
-            movie_year = match_obj.group(2)
-            #print "{0} {1}" .format(match_obj.group(1),match_obj.group(2))
-        else:
-            movie_name = re.match(r'^(.*)([0-9]{4})?\.?(720p|1080p)?.*$', movie_info).group(1)
-            if re.search("\.", movie_name):
-                movie_name = re.sub(r'([0-9]{4})', '' ,movie_name)
-            movie_year = ''
-        data = search_movie(movie_name,movie_year)
-        #print "{0};{1};{2};{3};{4}" .format(data['name'], data['chn_title'], data['year'],
-        print "{:<10}[{}][{}][{}][{}][{}]" .format(data['subject_id'], data['name'], data['chn_title'], 
-                                            data['year'],
-                                            data['rating_score'], data['rating_total_nums'])
-        sleeptime = random.uniform(0, 5)
-        sleeptime = Decimal(sleeptime).quantize(Decimal('0.00'))
-        time.sleep(sleeptime)
-        #print "{0} {1}" .format(movie_name,movie_year)
+
+def main():
+    movie_info_list = []
+    with open('movie.name','rU') as f:
+        for line in f:
+            movie_info = line.strip()
+            p = re.compile(r'^(.*?)[\.| |\s]?([0-9]{4})\.?.*$')
+            match_obj = p.match(movie_info)
+            if match_obj is not None:
+                movie_name = match_obj.group(1)
+                movie_year = match_obj.group(2)
+                #print "{0} {1}" .format(match_obj.group(1),match_obj.group(2))
+            else:
+                movie_name = re.match(r'^(.*)([0-9]{4})?\.?(720p|1080p)?.*$', movie_info).group(1)
+                if re.search("\.", movie_name):
+                    movie_name = re.sub(r'([0-9]{4})', '' ,movie_name)
+                movie_year = ''
+            data = search_movie(movie_name,movie_year)
+            #print "{0};{1};{2};{3};{4}" .format(data['name'], data['chn_title'], data['year'],
+            print "{:<10}[{}][{}][{}][{}][{}]" .format(data['subject_id'], data['name'], data['chn_title'], 
+                                                data['year'],
+                                                data['rating_score'], data['rating_total_nums'])
+            info_line = "{0}\t{1}\t{2}\t{3}\t{4}\t{5}".format(data['subject_id'], data['name'], data['chn_title'], 
+                                                data['year'],
+                                                data['rating_score'], data['rating_total_nums'])
+            movie_info_list.append(info_line)
+            sleeptime = random.uniform(0, 5)
+            sleeptime = Decimal(sleeptime).quantize(Decimal('0.00'))
+            time.sleep(sleeptime)
+            #print "{0} {1}" .format(movie_name,movie_year)
+        return movie_info_list
+
+
+if __name__ == '__main__':
+    # write to movie.csv
+    f_csv = 'movie_info.csv'
+    head_instruction = "dbid\toriginal_name\tdb_chn_title\tyear\trating_score\trating_num"
+    movie_info_list = main()
+    write_to_csv(f_csv, head_instruction, *movie_info_list)
