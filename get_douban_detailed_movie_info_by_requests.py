@@ -64,6 +64,8 @@ def get_movie_base_info(subject):
             #print r_region, r_date
             if '中国大陆'.decode('utf-8').encode("utf-8") in r_region:
                 release_date = r_date
+                # get first release date
+                break
     except:
         pass
     movie_info['release_date'] = release_date
