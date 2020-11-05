@@ -50,30 +50,61 @@ def get_celebrity_detailed_info(celebrity_id):
     r = requests.get(url_link, headers=douban_headers)
     soup = BeautifulSoup(r.text.encode('utf-8'), 'lxml')
     soup_fans = soup.select('div[id="fans"]')[0].h2.find(text=re.compile("影迷".decode("utf-8"))).split('\n')[1]
-    celebrity_info['celebrity_name'] = re.sub(u' \(豆瓣\)', '' ,soup.title.text.strip())
-    gender_anchor = soup.find("span", text=re.compile("性别".decode("utf-8")))
-    gender = gender_anchor.next_element.next_element.strip().split('\n')[1].strip() 
-    constellation_anchor = soup.find("span", text=re.compile("星座".decode("utf-8")))
-    constellation = constellation_anchor.next_element.next_element.strip().split('\n')[1].strip()      
-    
-    birthday_anchor = soup.find("span", text=re.compile("出生日期".decode("utf-8")))
-    birthday = birthday_anchor.next_element.next_element.strip().split('\n')[1].strip()    
-    
-    
-    birth_place_anchor = soup.find("span", text=re.compile("出生地".decode("utf-8")))
-    birth_place = birth_place_anchor.next_element.next_element.strip().split('\n')[1].strip()    
-    
-    profession_anchor = soup.find("span", text=re.compile("职业".decode("utf-8")))
-    profession = profession_anchor.next_element.next_element.strip().split('\n')[1].strip()    
-    
-    other_foreign_name_anchor = soup.find("span", text=re.compile("更多外文名".decode("utf-8")))
-    other_foreign_name = other_foreign_name_anchor.next_element.next_element.strip().split('\n')[1].strip()    
-    
-    imdb_number = soup.find("a", href=re.compile("https://www.imdb.com/name".decode("utf-8"))).text
     try:
         celebrity_info['fans'] = re.match(r'^.*?([0-9]+).*$', soup_fans).group(1)
     except:
         celebrity_info['fans'] = 'N/A'
+
+    celebrity_info['celebrity_name'] = re.sub(u' \(豆瓣\)', '' ,soup.title.text.strip())
+    
+    try:
+        gender_anchor = soup.find("span", text=re.compile("性别".decode("utf-8")))
+        gender = gender_anchor.next_element.next_element.strip().split('\n')[1].strip() 
+    except AttributeError:
+        gender = 'N/A'
+
+    try:
+        constellation_anchor = soup.find("span", text=re.compile("星座".decode("utf-8")))
+        constellation = constellation_anchor.next_element.next_element.strip().split('\n')[1].strip()      
+    except AttributeError:
+        constellation = 'N/A'
+    
+    try:
+        birthday_anchor = soup.find("span", text=re.compile("出生日期".decode("utf-8")))
+        birthday = birthday_anchor.next_element.next_element.strip().split('\n')[1].strip()    
+    except AttributeError:
+        birthday = 'N/A'
+    
+    try:
+        birth_place_anchor = soup.find("span", text=re.compile("出生地".decode("utf-8")))
+        birth_place = birth_place_anchor.next_element.next_element.strip().split('\n')[1].strip()    
+    except AttributeError:
+        birth_place = 'N/A'
+    
+    try:
+        profession_anchor = soup.find("span", text=re.compile("职业".decode("utf-8")))
+        profession = profession_anchor.next_element.next_element.strip().split('\n')[1].strip()    
+    except AttributeError:
+        profession = 'N/A'
+    
+    try:
+        other_foreign_name_anchor = soup.find("span", text=re.compile("更多外文名".decode("utf-8")))
+        other_foreign_name = other_foreign_name_anchor.next_element.next_element.strip().split('\n')[1].strip()    
+    except:
+        other_foreign_name = 'N/A'
+    
+    try:
+        other_chinese_name_anchor = soup.find("span", text=re.compile("更多中文名".decode("utf-8")))
+        #other_chinese_name = other_chinese_name_anchor.next_element.next_element.strip().split('\n')[1].strip()
+        other_chinese_name = "/".join([ x for x in other_chinese_name_anchor.next_element.next_element.strip().split('\n')[1].strip().split('/') if '昵称xxx' in x ])
+    except:
+        other_chinese_name = 'N/A'
+    
+    try:
+        imdb_number = soup.find("a", href=re.compile("https://www.imdb.com/name".decode("utf-8"))).text
+    except:
+        imdb_number = 'N/A'
+
     return celebrity_info
 
 
@@ -162,9 +193,9 @@ def get_movie_base_info(subject):
     try:
         if 'celebrity' in subuject_info_result.find('a', attrs={"rel": "v:directedBy"})['href']:
             directedBy_id = subuject_info_result.find('a', attrs={"rel": "v:directedBy"})['href']
-        print "directedBy_id:{}" .format(directedBy_id)
     except TypeError:
         directedBy_id = 'N/A'
+    print "directedBy_id:{}" .format(directedBy_id)
     try:
         cast = subuject_info_result.find('a', attrs={"rel": "v:starring"}).text
     except AttributeError:
