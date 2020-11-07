@@ -241,7 +241,7 @@ def get_movie_base_info(subject):
     #html = r.content.decode('utf-8')
     #re.findall(u'''语言:</span>(.*)<br/>''', html)[0]
     #re.findall(u'''<span class="pl">制片国家/地区:</span>(.*)<br/>''', html)[0]
-    #re.findall(u'''<span class="pl">IMDb链接:</span> <a href="http://www.imdb.com/title/tt[0-9]+" target="_blank" rel="nofollow">(.*)</a><br>''', html)[0]
+    #re.findall(u'''<span class="pl">IMDb链接:</span> <a href="https://www.imdb.com/title/tt[0-9]+" target="_blank" rel="nofollow">(.*)</a><br>''', html)[0]
     # deal with director
     if directedBy == 'N/A':
         movie_info['director'] = director
