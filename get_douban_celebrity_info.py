@@ -59,51 +59,55 @@ def get_celebrity_detailed_info(celebrity_id):
     
     try:
         gender_anchor = soup.find("span", text=re.compile("性别".decode("utf-8")))
-        gender = gender_anchor.next_element.next_element.strip().split('\n')[1].strip() 
+        celebrity_info['gender'] = gender_anchor.next_element.next_element.strip().split('\n')[1].strip() 
     except AttributeError:
-        gender = 'N/A'
+        celebrity_info['gender'] = 'N/A'
 
     try:
         constellation_anchor = soup.find("span", text=re.compile("星座".decode("utf-8")))
-        constellation = constellation_anchor.next_element.next_element.strip().split('\n')[1].strip()      
+        celebrity_info['constellation'] = constellation_anchor.next_element.next_element.strip().split('\n')[1].strip()      
     except AttributeError:
-        constellation = 'N/A'
+        celebrity_info['constellation'] = 'N/A'
     
     try:
         birthday_anchor = soup.find("span", text=re.compile("出生日期".decode("utf-8")))
-        birthday = birthday_anchor.next_element.next_element.strip().split('\n')[1].strip()    
+        celebrity_info['birthday'] = birthday_anchor.next_element.next_element.strip().split('\n')[1].strip()    
     except AttributeError:
-        birthday = 'N/A'
+        celebrity_info['birthday'] = 'N/A'
     
     try:
         birth_place_anchor = soup.find("span", text=re.compile("出生地".decode("utf-8")))
-        birth_place = birth_place_anchor.next_element.next_element.strip().split('\n')[1].strip()    
+        celebrity_info['birth_place'] = birth_place_anchor.next_element.next_element.strip().split('\n')[1].strip()    
     except AttributeError:
-        birth_place = 'N/A'
+        celebrity_info['birth_place'] = 'N/A'
     
     try:
         profession_anchor = soup.find("span", text=re.compile("职业".decode("utf-8")))
-        profession = profession_anchor.next_element.next_element.strip().split('\n')[1].strip()    
+        celebrity_info['profession'] = profession_anchor.next_element.next_element.strip().split('\n')[1].strip()    
     except AttributeError:
-        profession = 'N/A'
+        celebrity_info['profession'] = 'N/A'
     
     try:
         other_foreign_name_anchor = soup.find("span", text=re.compile("更多外文名".decode("utf-8")))
-        other_foreign_name = other_foreign_name_anchor.next_element.next_element.strip().split('\n')[1].strip()    
+        celebrity_info['other_foreign_name'] = other_foreign_name_anchor.next_element.next_element.strip().split('\n')[1].strip()    
     except:
-        other_foreign_name = 'N/A'
+        celebrity_info['other_foreign_name'] = 'N/A'
     
     try:
         other_chinese_name_anchor = soup.find("span", text=re.compile("更多中文名".decode("utf-8")))
         #other_chinese_name = other_chinese_name_anchor.next_element.next_element.strip().split('\n')[1].strip()
-        other_chinese_name = "/".join([ x for x in other_chinese_name_anchor.next_element.next_element.strip().split('\n')[1].strip().split('/') if '昵称xxx' in x ])
+        celebrity_info['other_chinese_name'] = "/".join([ x for x in other_chinese_name_anchor.next_element.next_element.strip().split('\n')[1].strip().split('/') if '昵称' in x ])
     except:
-        other_chinese_name = 'N/A'
+        celebrity_info['other_chinese_name'] = 'N/A'
     
     try:
         imdb_number = soup.find("a", href=re.compile("https://www.imdb.com/name".decode("utf-8"))).text
     except:
         imdb_number = 'N/A'
+
+    sleeptime = random.uniform(0, 3)
+    sleeptime = Decimal(sleeptime).quantize(Decimal('0.00'))
+    time.sleep(sleeptime)
 
     return celebrity_info
 
@@ -143,7 +147,7 @@ def get_movie_detailed_info(f):
                 movie_info = "{0}\t{1}" .format(subject_id, movie_error)
                 movie_info_list.append(movie_info)
             else:
-                # get director celebrity id
+                # get director actor celebrity id
                 # match chinese character
                 pattern =re.compile(u"[\u4e00-\u9fa5]+")
                 position_list = ['director', 'actor']
@@ -159,9 +163,9 @@ def get_movie_detailed_info(f):
                                                                                  person_id, position, celebrity_name, 
                                                                                  fans_num)     
                         movie_info_list.append(movie_info)
-                        print movie_name, movie_type, directedBy
+                        print movie_name, movie_type, celebrity_name
                     else:
-                        for person in  movie_json[i]:
+                        for person in  movie_json[i][0:2]:
                             name = person.get('name', 'N/A')
                             person_id = person.get('url', 'N/A')
                             if len(re.findall(pattern, name)) == 0:
@@ -175,19 +179,6 @@ def get_movie_detailed_info(f):
                                                 celebrity_name, fans_num)
                             movie_info_list.append(movie_info)
                             print subject_id, movie_type, movie_name, position, celebrity_name, person_id, fans_num
-                # get actor celebrity id
-                print '---主演---\n'
-                for person in  movie_json['actor']:
-                    position = '演员'
-                    name = person.get('name', 'N/A')
-                    actor_id = person.get('url', 'N/A')
-                    if len(re.findall(pattern,name)) == 0:
-                        actor = name
-                    else:
-                        actor = person.get('name', 'N/A').split()[0]
-                    celebrity_info = get_celebrity_detailed_info(actor_id)
-                    fans_num = celebrity_info['fans']
-                    print movie_name, movie_type, actor, actor_id, fans_num
             sleeptime = random.uniform(0, 3)
             sleeptime = Decimal(sleeptime).quantize(Decimal('0.00'))
             time.sleep(sleeptime)
