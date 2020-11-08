@@ -110,7 +110,16 @@ def get_celebrity_detailed_info(celebrity_id):
         celebrity_info['birthday'] = birthday_anchor.next_element.next_element.strip().split('\n')[1].strip()    
     except AttributeError:
         celebrity_info['birthday'] = 'N/A'
-    
+    else:
+        celebrity_info['deathday'] = 'N/A'
+
+    try:
+        birthday_anchor = soup.find("span", text=re.compile("生卒日期".decode("utf-8")))
+        celebrity_info['birthday'] = birthday_anchor.next_element.next_element.strip().split('\n')[1].strip().split()[0]
+        celebrity_info['deathday'] = birthday_anchor.next_element.next_element.strip().split('\n')[1].strip().split()[2]
+    except AttributeError:
+        pass
+
     try:
         birth_place_anchor = soup.find("span", text=re.compile("出生地".decode("utf-8")))
         celebrity_info['birth_place'] = birth_place_anchor.next_element.next_element.strip().split('\n')[1].strip()    
@@ -216,7 +225,7 @@ def get_movie_detailed_info(f):
                                 celebrity_info = get_celebrity_detailed_info(person_id)
                                 RESULT[person_id] = celebrity_info
                                 store_to_file(**RESULT)
-                            fans_num = celebrity_info['fans']
+                                fans_num = celebrity_info['fans']
                             movie_info = "{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}"  \
                                          .format(subject_id, movie_type, movie_name, person_id, position,
                                                 celebrity_name, fans_num)
