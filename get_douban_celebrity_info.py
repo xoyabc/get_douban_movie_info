@@ -15,6 +15,13 @@ import time
 reload(sys)
 sys.setdefaultencoding("utf-8")
 
+RESULT = {}
+user_info_file = "user_info.txt"
+TITLE = [
+'subject_id', 'movie_type', 'movie_name', 'person_id', 'position',
+'celebrity_name', 'fans_num'
+]
+
 
 # header content
 douban_headers = {
@@ -38,6 +45,35 @@ def write_to_csv(filename, head_line, *info_list):
         for row in info_list:
             row_list = row.split('\t')
             writer.writerow(row_list)
+
+def get_data():
+    global RESULT
+    try:
+        fd = open(user_info_file, 'rU')
+        data = fd.read()
+        RESULT_DICT = json.loads(data, strict=False)
+    except Exception as e:
+        pass
+    else:
+        if not RESULT:
+            RESULT = RESULT_DICT
+        fd.close()
+    return RESULT
+
+
+# store the user info to file
+def store_to_file(**DICT):
+    fd = open(user_info_file, 'w')
+    try:
+        fd.write(json.dumps(DICT))
+    except Exception as e:
+        err_msg = "Write error,errmsg: {}" .format(e)
+        return err_msg, False
+    finally:
+        fd.close()
+    ok_msg = "save to {} succeed" .format(user_info_file)
+    return ok_msg, True
+
 
 def get_celebrity_detailed_info(celebrity_id):
     celebrity_info = {}
@@ -172,7 +208,14 @@ def get_movie_detailed_info(f):
                                 celebrity_name = name
                             else:
                                 celebrity_name = person.get('name', 'N/A').split()[0]
-                            celebrity_info = get_celebrity_detailed_info(person_id)
+                            RESULT = get_data()
+                            if person_id in RESULT:
+                                err_msg = "{} is already added" .format(" ".join(person_id))
+                                print err_msg
+                            else:
+                                celebrity_info = get_celebrity_detailed_info(person_id)
+                                RESULT[person_id] = celebrity_info
+                                store_to_file(**RESULT)
                             fans_num = celebrity_info['fans']
                             movie_info = "{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}"  \
                                          .format(subject_id, movie_type, movie_name, person_id, position,
