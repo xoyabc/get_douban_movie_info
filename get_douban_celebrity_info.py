@@ -16,7 +16,7 @@ reload(sys)
 sys.setdefaultencoding("utf-8")
 
 RESULT = {}
-user_info_file = "user_info.txt"
+movie_info_file = "movie_info.txt"
 TITLE = [
 'subject_id', 'movie_type', 'movie_name', 'person_id', 'position',
 'celebrity_name', 'fans_num'
@@ -49,7 +49,7 @@ def write_to_csv(filename, head_line, *info_list):
 def get_data():
     global RESULT
     try:
-        fd = open(user_info_file, 'rU')
+        fd = open(movie_info_file, 'rU')
         data = fd.read()
         RESULT_DICT = json.loads(data, strict=False)
     except Exception as e:
@@ -63,7 +63,7 @@ def get_data():
 
 # store the user info to file
 def store_to_file(**DICT):
-    fd = open(user_info_file, 'w')
+    fd = open(movie_info_file, 'w')
     try:
         fd.write(json.dumps(DICT))
     except Exception as e:
@@ -71,7 +71,7 @@ def store_to_file(**DICT):
         return err_msg, False
     finally:
         fd.close()
-    ok_msg = "save to {} succeed" .format(user_info_file)
+    ok_msg = "save to {} succeed" .format(movie_info_file)
     return ok_msg, True
 
 
@@ -132,7 +132,7 @@ def get_celebrity_detailed_info(celebrity_id):
     try:
         other_chinese_name_anchor = soup.find("span", text=re.compile("更多中文名".decode("utf-8")))
         #other_chinese_name = other_chinese_name_anchor.next_element.next_element.strip().split('\n')[1].strip()
-        celebrity_info['other_chinese_name'] = "/".join([ x for x in other_chinese_name_anchor.next_element.next_element.strip().split('\n')[1].strip().split('/') if '昵称' in x ])
+        celebrity_info['other_chinese_name'] = "/".join([ x for x in other_chinese_name_anchor.next_element.next_element.strip().split('\n')[1].strip().split('/ ') if '昵称' in x ])
     except:
         celebrity_info['other_chinese_name'] = 'N/A'
     
