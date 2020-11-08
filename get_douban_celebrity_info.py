@@ -17,10 +17,14 @@ sys.setdefaultencoding("utf-8")
 
 RESULT = {}
 movie_info_file = "movie_info.txt"
-TITLE = [
-'subject_id', 'movie_type', 'movie_name', 'person_id', 'position',
-'celebrity_name', 'fans_num'
-]
+
+proxies = {
+"https": "https://10.90.44.226:10101",
+"https": "https://172.17.49.80:10101",
+"https": "https://172.17.49.81:10101",
+"https": "https://10.70.113.196:10101",
+"https": "https://10.70.113.197:10101"
+}
 
 
 # header content
@@ -83,7 +87,7 @@ def get_celebrity_detailed_info(celebrity_id):
     else:
         celebrity_info['error'] = None
     url_link = 'https://movie.douban.com{0}' .format(celebrity_id)
-    r = requests.get(url_link, headers=douban_headers)
+    r = requests.get(url_link, headers=douban_headers, verify=False, proxies=proxies)
     soup = BeautifulSoup(r.text.encode('utf-8'), 'lxml')
     soup_fans = soup.select('div[id="fans"]')[0].h2.find(text=re.compile("影迷".decode("utf-8"))).split('\n')[1]
     try:
@@ -133,7 +137,7 @@ def get_celebrity_detailed_info(celebrity_id):
     try:
         other_foreign_name_anchor = soup.find("span", text=re.compile("更多外文名".decode("utf-8")))
         foreign_nick_name = "/".join([ x for x in other_foreign_name_anchor.next_element.next_element.strip().split('\n')[1].strip().split('/ ') if '昵称' in x ])
-        celebrity_info['other_foreign_name'] = 'N/A' if chinese_nick_name == '' else foreign_nick_name
+        celebrity_info['other_foreign_name'] = 'N/A' if foreign_nick_name == '' else foreign_nick_name
     except:
         celebrity_info['other_foreign_name'] = 'N/A'
     
