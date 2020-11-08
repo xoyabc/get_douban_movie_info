@@ -110,15 +110,13 @@ def get_celebrity_detailed_info(celebrity_id):
         celebrity_info['birthday'] = birthday_anchor.next_element.next_element.strip().split('\n')[1].strip()    
     except AttributeError:
         celebrity_info['birthday'] = 'N/A'
-    else:
-        celebrity_info['deathday'] = 'N/A'
 
     try:
         birthday_anchor = soup.find("span", text=re.compile("生卒日期".decode("utf-8")))
         celebrity_info['birthday'] = birthday_anchor.next_element.next_element.strip().split('\n')[1].strip().split()[0]
         celebrity_info['deathday'] = birthday_anchor.next_element.next_element.strip().split('\n')[1].strip().split()[2]
     except AttributeError:
-        pass
+        celebrity_info['deathday'] = 'N/A'
 
     try:
         birth_place_anchor = soup.find("span", text=re.compile("出生地".decode("utf-8")))
@@ -134,21 +132,24 @@ def get_celebrity_detailed_info(celebrity_id):
     
     try:
         other_foreign_name_anchor = soup.find("span", text=re.compile("更多外文名".decode("utf-8")))
-        celebrity_info['other_foreign_name'] = other_foreign_name_anchor.next_element.next_element.strip().split('\n')[1].strip()    
+        foreign_nick_name = "/".join([ x for x in other_foreign_name_anchor.next_element.next_element.strip().split('\n')[1].strip().split('/ ') if '昵称' in x ])
+        celebrity_info['other_foreign_name'] = 'N/A' if chinese_nick_name == '' else foreign_nick_name
     except:
         celebrity_info['other_foreign_name'] = 'N/A'
     
     try:
         other_chinese_name_anchor = soup.find("span", text=re.compile("更多中文名".decode("utf-8")))
         #other_chinese_name = other_chinese_name_anchor.next_element.next_element.strip().split('\n')[1].strip()
-        celebrity_info['other_chinese_name'] = "/".join([ x for x in other_chinese_name_anchor.next_element.next_element.strip().split('\n')[1].strip().split('/ ') if '昵称' in x ])
+        chinese_nick_name = "/".join([ x for x in other_chinese_name_anchor.next_element.next_element.strip().split('\n')[1].strip().split('/ ') if '昵称' in x ])
+        celebrity_info['other_chinese_name'] = 'N/A' if chinese_nick_name == '' else chinese_nick_name
     except:
         celebrity_info['other_chinese_name'] = 'N/A'
     
     try:
         imdb_number = soup.find("a", href=re.compile("https://www.imdb.com/name".decode("utf-8"))).text
+        celebrity_info['imdb_number'] = imdb_number
     except:
-        imdb_number = 'N/A'
+        celebrity_info['imdb_number'] = 'N/A'
 
     sleeptime = random.uniform(0, 3)
     sleeptime = Decimal(sleeptime).quantize(Decimal('0.00'))
@@ -197,16 +198,20 @@ def get_movie_detailed_info(f):
                 pattern =re.compile(u"[\u4e00-\u9fa5]+")
                 position_list = ['director', 'actor']
                 # init vars
-                person_id = 'N/A'
+                person_id = gender = constellation = birthday = deathday = birth_place = profession \
+                          = other_foreign_name = other_chinese_name = imdb_number = 'N/A'
                 fans_num = 0
                 print '---导演---\n'
                 for i in position_list:
                     position = '导演' if i == 'director' else '主演'
                     if len(movie_json[i]) == 0:
                         celebrity_name = directedBy if i == 'director' else cast
-                        movie_info = "{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}" .format(subject_id, movie_type, movie_name,
-                                                                                 person_id, position, celebrity_name, 
-                                                                                 fans_num)     
+                        movie_info = "{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}\t{8}\t{9}\t{10}\t{11}\t{12} \
+                                      \t{13}\t{14}\t{15}" .format(subject_id, movie_type, movie_name, person_id, 
+                                                                  position, celebrity_name, fans_num, gender, 
+                                                                  constellation, birthday, deathday, birth_place,
+                                                                  profession, other_foreign_name, other_chinese_name,
+                                                                  imdb_number)
                         movie_info_list.append(movie_info)
                         print movie_name, movie_type, celebrity_name
                     else:
@@ -214,23 +219,39 @@ def get_movie_detailed_info(f):
                             name = person.get('name', 'N/A')
                             person_id = person.get('url', 'N/A')
                             if len(re.findall(pattern, name)) == 0:
+                                # get original name if chinese name does not exist
                                 celebrity_name = name
                             else:
+                                # get chinese name
                                 celebrity_name = person.get('name', 'N/A').split()[0]
                             RESULT = get_data()
                             if person_id in RESULT:
                                 err_msg = "{} is already added" .format(person_id)
+                                celebrity_info = RESULT[person_id]
                                 print err_msg
                             else:
                                 celebrity_info = get_celebrity_detailed_info(person_id)
                                 RESULT[person_id] = celebrity_info
                                 store_to_file(**RESULT)
-                                fans_num = celebrity_info['fans']
-                            movie_info = "{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}"  \
+                            fans_num = celebrity_info['fans']
+                            gender = celebrity_info['gender']
+                            constellation = celebrity_info['constellation']
+                            birthday = celebrity_info['birthday']
+                            deathday = celebrity_info['deathday']
+                            birth_place = celebrity_info['birth_place']
+                            profession = celebrity_info['profession']
+                            other_foreign_name = celebrity_info['other_foreign_name']
+                            other_chinese_name = celebrity_info['other_chinese_name']
+                            imdb_number = celebrity_info['imdb_number']
+
+                            movie_info = "{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}\t{8}\t{9} \
+                                          \t{10}\t{11}\t{12}\t{13}\t{14}\t{15}"  \
                                          .format(subject_id, movie_type, movie_name, person_id, position,
-                                                celebrity_name, fans_num)
+                                                celebrity_name, fans_num, gender, constellation, birthday,
+                                                deathday, birth_place, profession, other_foreign_name,
+                                                other_chinese_name, imdb_number)
                             movie_info_list.append(movie_info)
-                            print subject_id, movie_type, movie_name, position, celebrity_name, person_id, fans_num
+                            print subject_id, movie_type, movie_name, position, celebrity_name, person_id, fans_num, gender, constellation, birthday, deathday, birth_place, profession, other_foreign_name, other_chinese_name, imdb_number
             sleeptime = random.uniform(0, 3)
             sleeptime = Decimal(sleeptime).quantize(Decimal('0.00'))
             time.sleep(sleeptime)
@@ -241,6 +262,7 @@ if __name__ == '__main__':
     # douban movie subject id
     f = 'movie.list'
     f_csv = 'movie.csv'
-    head_instruction = "subject_id\ttype\t中文名\tcelebrity_id\tposition\tcelebrity_name\t收藏数"
+    head_instruction = "subject_id\ttype\t中文名\tcelebrity_id\tposition\tcelebrity_name\t收藏数 \
+                        \t性别\t星座\t出生日期\t逝世日期\t出生地\t职业\t更多外文名\t更多中文名\timdb编号"
     movie_info_list = get_movie_detailed_info(f)
     write_to_csv(f_csv, head_instruction, *movie_info_list)
