@@ -61,7 +61,7 @@ def get_data():
     return RESULT
 
 
-# store the user info to file
+# store the movie info to file
 def store_to_file(**DICT):
     fd = open(movie_info_file, 'w')
     try:
@@ -219,7 +219,7 @@ def get_movie_detailed_info(f):
                                 celebrity_name = person.get('name', 'N/A').split()[0]
                             RESULT = get_data()
                             if person_id in RESULT:
-                                err_msg = "{} is already added" .format(" ".join(person_id))
+                                err_msg = "{} is already added" .format(person_id)
                                 print err_msg
                             else:
                                 celebrity_info = get_celebrity_detailed_info(person_id)
