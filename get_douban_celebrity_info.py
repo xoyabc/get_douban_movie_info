@@ -22,8 +22,7 @@ proxies = {
 "https": "https://10.90.44.226:10101",
 "https": "https://172.17.49.80:10101",
 "https": "https://172.17.49.81:10101",
-"https": "https://10.70.113.196:10101",
-"https": "https://10.70.113.197:10101"
+"https": "https://10.70.113.196:10101"
 }
 
 
@@ -87,10 +86,18 @@ def get_celebrity_detailed_info(celebrity_id):
     else:
         celebrity_info['error'] = None
     url_link = 'https://movie.douban.com{0}' .format(celebrity_id)
-    r = requests.get(url_link, headers=douban_headers, verify=False, proxies=proxies)
-    soup = BeautifulSoup(r.text.encode('utf-8'), 'lxml')
-    soup_fans = soup.select('div[id="fans"]')[0].h2.find(text=re.compile("影迷".decode("utf-8"))).split('\n')[1]
     try:
+        r = requests.get(url_link, headers=douban_headers, verify=False, proxies=proxies)
+    except:
+        r = requests.get(url_link, headers=douban_headers, verify=False, proxies=proxies)
+        if r.status_code == 200:
+            pass
+        else:
+            r = requests.get(url_link, headers=douban_headers, verify=False, proxies=proxies)
+    print r.status_code
+    soup = BeautifulSoup(r.text.encode('utf-8'), 'lxml')
+    try:
+        soup_fans = soup.select('div[id="fans"]')[0].h2.find(text=re.compile("影迷".decode("utf-8"))).split('\n')[1]
         celebrity_info['fans'] = re.match(r'^.*?([0-9]+).*$', soup_fans).group(1)
     except:
         celebrity_info['fans'] = 'N/A'
@@ -155,7 +162,7 @@ def get_celebrity_detailed_info(celebrity_id):
     except:
         celebrity_info['imdb_number'] = 'N/A'
 
-    sleeptime = random.uniform(0, 3)
+    sleeptime = random.uniform(30, 50)
     sleeptime = Decimal(sleeptime).quantize(Decimal('0.00'))
     time.sleep(sleeptime)
 
@@ -219,7 +226,7 @@ def get_movie_detailed_info(f):
                         movie_info_list.append(movie_info)
                         print movie_name, movie_type, celebrity_name
                     else:
-                        for person in  movie_json[i][0:2]:
+                        for person in  movie_json[i][0:10]:
                             name = person.get('name', 'N/A')
                             person_id = person.get('url', 'N/A')
                             if len(re.findall(pattern, name)) == 0:
