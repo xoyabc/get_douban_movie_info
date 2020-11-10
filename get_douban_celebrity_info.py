@@ -87,13 +87,17 @@ def get_celebrity_detailed_info(celebrity_id):
         celebrity_info['error'] = None
     url_link = 'https://movie.douban.com{0}' .format(celebrity_id)
     try:
-        r = requests.get(url_link, headers=douban_headers, verify=False, proxies=proxies)
+        s = requests.Session()
+        s.trust_env = False
+        r = requests.get(url_link, headers=douban_headers, verify=False)
     except:
-        r = requests.get(url_link, headers=douban_headers, verify=False, proxies=proxies)
+        r = requests.get(url_link, headers={'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.88 Safari/537.36'} ,verify=False, proxies=proxies)
+        #r = requests.get(url_link, headers={'User-Agent': 'Mozilla/5.0 (Linux; Android 6.0.1; Nexus 5X Build/MMB29P) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.96 Mobile Safari/537.36 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)'}, verify=False, proxies=proxies)
         if r.status_code == 200:
             pass
         else:
-            r = requests.get(url_link, headers=douban_headers, verify=False, proxies=proxies)
+            r = requests.get(url_link, verify=False)
+            #r = requests.get(url_link, headers=douban_headers, verify=False, proxies=proxies)
     print r.status_code
     soup = BeautifulSoup(r.text.encode('utf-8'), 'lxml')
     try:
@@ -162,7 +166,7 @@ def get_celebrity_detailed_info(celebrity_id):
     except:
         celebrity_info['imdb_number'] = 'N/A'
 
-    sleeptime = random.uniform(30, 50)
+    sleeptime = random.uniform(50, 80)
     sleeptime = Decimal(sleeptime).quantize(Decimal('0.00'))
     time.sleep(sleeptime)
 
@@ -175,7 +179,7 @@ def get_movie_detailed_info(f):
         for subject_id in f:
             subject_id = subject_id.strip()
             url_link = 'https://movie.douban.com/subject/{0}' .format(subject_id)
-            r = requests.get(url_link, headers=douban_headers)
+            r = requests.get(url_link, headers=douban_headers, verify=False)
             if r.status_code == 200:
                 movie_error = None
             else:
@@ -229,6 +233,7 @@ def get_movie_detailed_info(f):
                         for person in  movie_json[i][0:10]:
                             name = person.get('name', 'N/A')
                             person_id = person.get('url', 'N/A')
+                            print person_id, movie_json
                             if len(re.findall(pattern, name)) == 0:
                                 # get original name if chinese name does not exist
                                 celebrity_name = name
@@ -241,6 +246,7 @@ def get_movie_detailed_info(f):
                                 celebrity_info = RESULT[person_id]
                                 print err_msg
                             else:
+                                print "hhhhaaaaaa"
                                 celebrity_info = get_celebrity_detailed_info(person_id)
                                 RESULT[person_id] = celebrity_info
                                 store_to_file(**RESULT)
@@ -263,7 +269,7 @@ def get_movie_detailed_info(f):
                                                 other_chinese_name, imdb_number)
                             movie_info_list.append(movie_info)
                             print subject_id, movie_type, movie_name, position, celebrity_name, person_id, fans_num, gender, constellation, birthday, deathday, birth_place, profession, other_foreign_name, other_chinese_name, imdb_number
-            sleeptime = random.uniform(0, 3)
+            sleeptime = random.uniform(60, 90)
             sleeptime = Decimal(sleeptime).quantize(Decimal('0.00'))
             time.sleep(sleeptime)
     return movie_info_list
