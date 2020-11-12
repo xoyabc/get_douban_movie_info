@@ -20,6 +20,7 @@ movie_info_file = "movie_info.txt"
 
 proxies = {
 "https": "https://10.90.44.226:10101",
+"https": "https://10.90.45.9:10101",
 "https": "https://172.17.49.80:10101",
 "https": "https://172.17.49.81:10101",
 "https": "https://10.70.113.196:10101"
@@ -87,17 +88,14 @@ def get_celebrity_detailed_info(celebrity_id):
         celebrity_info['error'] = None
     url_link = 'https://movie.douban.com{0}' .format(celebrity_id)
     try:
-        s = requests.Session()
-        s.trust_env = False
-        r = requests.get(url_link, headers=douban_headers, verify=False)
+        r = requests.get(url_link, headers=douban_headers, verify=False, proxies=proxies)
     except:
-        r = requests.get(url_link, headers={'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.88 Safari/537.36'} ,verify=False, proxies=proxies)
+        r = requests.get(url_link, headers={'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.88 Safari/537.36'} ,verify=False)
         #r = requests.get(url_link, headers={'User-Agent': 'Mozilla/5.0 (Linux; Android 6.0.1; Nexus 5X Build/MMB29P) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.96 Mobile Safari/537.36 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)'}, verify=False, proxies=proxies)
         if r.status_code == 200:
             pass
         else:
-            r = requests.get(url_link, verify=False)
-            #r = requests.get(url_link, headers=douban_headers, verify=False, proxies=proxies)
+            r = requests.get(url_link, headers=douban_headers, verify=False)
     print r.status_code
     soup = BeautifulSoup(r.text.encode('utf-8'), 'lxml')
     try:
@@ -166,7 +164,7 @@ def get_celebrity_detailed_info(celebrity_id):
     except:
         celebrity_info['imdb_number'] = 'N/A'
 
-    sleeptime = random.uniform(50, 80)
+    sleeptime = random.uniform(750, 970)
     sleeptime = Decimal(sleeptime).quantize(Decimal('0.00'))
     time.sleep(sleeptime)
 
@@ -230,7 +228,7 @@ def get_movie_detailed_info(f):
                         movie_info_list.append(movie_info)
                         print movie_name, movie_type, celebrity_name
                     else:
-                        for person in  movie_json[i][0:10]:
+                        for person in  movie_json[i][0:2]:
                             name = person.get('name', 'N/A')
                             person_id = person.get('url', 'N/A')
                             print person_id, movie_json
@@ -269,7 +267,7 @@ def get_movie_detailed_info(f):
                                                 other_chinese_name, imdb_number)
                             movie_info_list.append(movie_info)
                             print subject_id, movie_type, movie_name, position, celebrity_name, person_id, fans_num, gender, constellation, birthday, deathday, birth_place, profession, other_foreign_name, other_chinese_name, imdb_number
-            sleeptime = random.uniform(60, 90)
+            sleeptime = random.uniform(660, 890)
             sleeptime = Decimal(sleeptime).quantize(Decimal('0.00'))
             time.sleep(sleeptime)
     return movie_info_list
