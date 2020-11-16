@@ -121,7 +121,7 @@ def get_celebrity_detailed_info(celebrity_id):
     try:
         birthday_anchor = soup.find("span", text=re.compile("出生日期".decode("utf-8")))
         celebrity_info['birthday'] = birthday_anchor.next_element.next_element.strip().split('\n')[1].strip()    
-    except AttributeError:
+    except:
         celebrity_info['birthday'] = 'N/A'
 
     try:
