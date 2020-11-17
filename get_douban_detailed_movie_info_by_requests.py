@@ -49,8 +49,8 @@ def get_celebrity_detailed_info(celebrity_id):
     url_link = 'https://movie.douban.com{0}' .format(celebrity_id)
     r = requests.get(url_link, headers=douban_headers)
     soup = BeautifulSoup(r.text.encode('utf-8'), 'lxml')
-    soup_fans = soup.select('div[id="fans"]')[0].h2.find(text=re.compile("影迷".decode("utf-8"))).split('\n')[1]
     try:
+        soup_fans = soup.select('div[id="fans"]')[0].h2.find(text=re.compile("影迷".decode("utf-8"))).split('\n')[1]
         celebrity_info['fans'] = re.match(r'^.*?([0-9]+).*$', soup_fans).group(1)
     except:
         celebrity_info['fans'] = 'N/A'
