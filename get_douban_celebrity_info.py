@@ -164,9 +164,6 @@ def get_celebrity_detailed_info(celebrity_id):
     except:
         celebrity_info['imdb_number'] = 'N/A'
 
-    sleeptime = random.uniform(750, 970)
-    sleeptime = Decimal(sleeptime).quantize(Decimal('0.00'))
-    time.sleep(sleeptime)
 
     return celebrity_info
 
@@ -187,25 +184,25 @@ def get_movie_detailed_info(f):
             # deal with page not found
             if re.search(u'你想访问的页面不存在', soup.prettify()):
                 movie_error = 'movie_not_found'
-            # get type, name, director info, actor info
-            script_json = soup.find_all(attrs={'type' : 'application/ld+json'})[0].get_text()
-            movie_json = json.loads(script_json, strict=False)
-            movie_type = movie_json.get('@type', 'N/A')
-            movie_name = re.sub(u' \(豆瓣\)', '' ,soup.title.text.strip())
-            # directedBy, cast
-            subuject_info_result = soup.find_all(attrs={'id' : 'info'})[0]
-            try:
-                directedBy = subuject_info_result.find('a', attrs={"rel": "v:directedBy"}).text
-            except AttributeError:
-                directedBy = 'N/A'
-            try:
-                cast = subuject_info_result.find('a', attrs={"rel": "v:starring"}).text
-            except AttributeError:
-                cast = 'N/A'
             if movie_error is not None:
                 movie_info = "{0}\t{1}" .format(subject_id, movie_error)
                 movie_info_list.append(movie_info)
             else:
+                # get type, name, director info, actor info
+                script_json = soup.find_all(attrs={'type' : 'application/ld+json'})[0].get_text()
+                movie_json = json.loads(script_json, strict=False)
+                movie_type = movie_json.get('@type', 'N/A')
+                movie_name = re.sub(u' \(豆瓣\)', '' ,soup.title.text.strip())
+                # directedBy, cast
+                subuject_info_result = soup.find_all(attrs={'id' : 'info'})[0]
+                try:
+                    directedBy = subuject_info_result.find('a', attrs={"rel": "v:directedBy"}).text
+                except AttributeError:
+                    directedBy = 'N/A'
+                try:
+                    cast = subuject_info_result.find('a', attrs={"rel": "v:starring"}).text
+                except AttributeError:
+                    cast = 'N/A'
                 # get director actor celebrity id
                 # match chinese character
                 pattern =re.compile(u"[\u4e00-\u9fa5]+")
@@ -244,10 +241,12 @@ def get_movie_detailed_info(f):
                                 celebrity_info = RESULT[person_id]
                                 print err_msg
                             else:
-                                print "hhhhaaaaaa"
                                 celebrity_info = get_celebrity_detailed_info(person_id)
                                 RESULT[person_id] = celebrity_info
                                 store_to_file(**RESULT)
+                                sleeptime = random.uniform(750, 970)
+                                sleeptime = Decimal(sleeptime).quantize(Decimal('0.00'))
+                                time.sleep(sleeptime)
                             fans_num = celebrity_info['fans']
                             gender = celebrity_info['gender']
                             constellation = celebrity_info['constellation']
