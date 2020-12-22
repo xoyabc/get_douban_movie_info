@@ -13,6 +13,8 @@ from decimal import Decimal
 import time
 reload(sys)
 sys.setdefaultencoding("utf-8")
+import urllib3
+urllib3.disable_warnings()
 
 
 # write to csv file
@@ -58,6 +60,8 @@ def search_movie(movie_name,movie_year):
     data['year'] = 'N/A'
     data['rating_score'] = 'N/A'
     data['rating_total_nums'] = 'N/A'
+    data['director'] = 'N/A'
+    data['actor'] = 'N/A'
     if all_subuject_result:
         for result in all_subuject_result:
             #print result
@@ -85,6 +89,10 @@ def search_movie(movie_name,movie_year):
                 else:
                     rating_score = rating_total_nums
                 #print "o-year:{0} m-year:{1}" .format(year,movie_year)
+                # director, actor
+                subject_cast_list = title.find_all(attrs={'class' : 'subject-cast'})[0].text.split('原名:')[1].split('/')
+                director = subject_cast_list[1].replace(' ','')
+                actor = subject_cast_list[-2].replace(' ','')
                 data['name'] = movie_name
                 data['chn_title'] = chn_title
                 data['link'] = link
@@ -92,6 +100,8 @@ def search_movie(movie_name,movie_year):
                 data['year'] = year
                 data['rating_score'] = rating_score
                 data['rating_total_nums'] = rating_total_nums
+                data['director'] = director
+                data['actor'] = actor
                 break
             else:
                 continue
@@ -116,12 +126,14 @@ def main():
                 movie_year = ''
             data = search_movie(movie_name,movie_year)
             #print "{0};{1};{2};{3};{4}" .format(data['name'], data['chn_title'], data['year'],
-            print "{:<10}[{}][{}][{}][{}][{}]" .format(data['subject_id'], data['name'], data['chn_title'], 
+            print "{:<10}[{}][{}][{}][{}][{}][{}][{}]" .format(data['subject_id'], data['name'], data['chn_title'], 
                                                 data['year'],
-                                                data['rating_score'], data['rating_total_nums'])
-            info_line = "{0}\t{1}\t{2}\t{3}\t{4}\t{5}".format(data['subject_id'], data['name'], data['chn_title'], 
-                                                data['year'],
-                                                data['rating_score'], data['rating_total_nums'])
+                                                data['rating_score'], data['rating_total_nums'],
+                                                data['director'], data['actor'])
+            info_line = "{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}".format(data['subject_id'], data['name'],
+                                                data['chn_title'], data['year'],
+                                                data['rating_score'], data['rating_total_nums'],
+                                                data['director'], data['actor'])
             movie_info_list.append(info_line)
             sleeptime = random.uniform(0, 5)
             sleeptime = Decimal(sleeptime).quantize(Decimal('0.00'))
@@ -133,6 +145,6 @@ def main():
 if __name__ == '__main__':
     # write to movie.csv
     f_csv = 'movie_info.csv'
-    head_instruction = "dbid\toriginal_name\tdb_chn_title\tyear\trating_score\trating_num"
+    head_instruction = "dbid\toriginal_name\tdb_chn_title\tyear\trating_score\trating_num\tdirector\tactor"
     movie_info_list = main()
     write_to_csv(f_csv, head_instruction, *movie_info_list)
