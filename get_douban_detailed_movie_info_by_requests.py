@@ -248,7 +248,9 @@ def get_movie_base_info(subject):
     else:
         movie_info['director'] = directedBy
     # deal with actor
-    if cast == 'N/A':
+    # add 'cast != actor' to deal with the subject when first starring in 'v:starring' is not in accord with the 
+    # first element of "actor" list in 'application/ld+json', such as https://movie.douban.com/subject/1299832/
+    if cast == 'N/A' or cast != actor:
         movie_info['actor'] = actor
     else:
         movie_info['actor'] = cast
@@ -270,7 +272,7 @@ def get_movie_detailed_info(f):
         movie_info_list = []
         for subject_id in f:
             subject_id = subject_id.strip()
-            data = get_movie_base_info(subject_id)
+            #data = get_movie_base_info(subject_id)
             try:
                 data = get_movie_base_info(subject_id)
                 # print "{0} {1}" .format(subject_id, data['error'])
