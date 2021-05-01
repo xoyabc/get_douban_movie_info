@@ -202,7 +202,7 @@ def get_movie_detailed_info(f):
                 movie_info_list.append(movie_info)
             else:
                 # get type, name, director info, actor info
-                script_json = soup.find_all(attrs={'type' : 'application/ld+json'})[0].get_text()
+                script_json = soup.find_all(attrs={'type' : 'application/ld+json'})[0].contents[0].strip()
                 movie_json = json.loads(script_json, strict=False)
                 movie_type = movie_json.get('@type', 'N/A')
                 movie_name = re.sub(u' \(豆瓣\)', '' ,soup.title.text.strip())

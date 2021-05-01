@@ -151,7 +151,7 @@ def get_movie_base_info(subject):
     except IndexError:
         rating_info = "无评分项"
     # type, name, duration, director, actor, genre, ratingCount, ratingValue
-    script_json = soup.find_all(attrs={'type' : 'application/ld+json'})[0].get_text()
+    script_json = soup.find_all(attrs={'type' : 'application/ld+json'})[0].contents[0].strip()
     movie_json = json.loads(script_json, strict=False)
     movie_info['type'] = movie_json.get('@type', 'N/A')
     #movie_info['name'] = movie_json.get('name', 'N/A').split()[0]
