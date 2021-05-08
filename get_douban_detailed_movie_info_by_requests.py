@@ -118,6 +118,7 @@ def get_movie_base_info(subject):
         movie_info['error'] = None
     else:
         movie_info['error'] = 'request error'
+        return movie_info
     # store the html data to soup
     soup = BeautifulSoup(r.text.encode('utf-8'), 'lxml')
     # deal with page not found
