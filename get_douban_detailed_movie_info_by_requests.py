@@ -11,6 +11,7 @@ import codecs
 from bs4 import BeautifulSoup  
 from urllib import unquote
 from decimal import Decimal
+from headers_config import USERAGENT_CONFIG
 import time
 reload(sys)
 sys.setdefaultencoding("utf-8")
@@ -47,7 +48,11 @@ def get_celebrity_detailed_info(celebrity_id):
     else:
         celebrity_info['error'] = None
     url_link = 'https://movie.douban.com{0}' .format(celebrity_id)
-    r = requests.get(url_link, headers=douban_headers)
+    try:
+        random_useragent = random.choice(USERAGENT_CONFIG)
+        r = requests.get(url_link, headers={'User-Agent': random_useragent} ,verify=False)
+    except:
+        r = requests.get(url_link, headers=douban_headers ,verify=False)
     soup = BeautifulSoup(r.text.encode('utf-8'), 'lxml')
     try:
         soup_fans = soup.select('div[id="fans"]')[0].h2.find(text=re.compile("影迷".decode("utf-8"))).split('\n')[1]
@@ -113,12 +118,17 @@ def get_movie_base_info(subject):
     url_link = 'https://movie.douban.com/subject/{0}' .format(subject)
     #url_link = 'https://movie.douban.com/subject/1296500'
     # request douban
-    r = requests.get(url_link, headers=douban_headers)
-    if r.status_code == 200:
-        movie_info['error'] = None
-    else:
-        movie_info['error'] = 'request error'
-        return movie_info
+    try:
+        random_useragent = random.choice(USERAGENT_CONFIG)
+        r = requests.get(url_link, headers={'User-Agent': random_useragent} ,verify=False)
+    except:
+        r = requests.get(url_link, headers=douban_headers ,verify=False)
+    finally:
+        if r.status_code == 200:
+            movie_info['error'] = None
+        else:
+            movie_info['error'] = 'request error'
+            return movie_info
     # store the html data to soup
     soup = BeautifulSoup(r.text.encode('utf-8'), 'lxml')
     # deal with page not found
