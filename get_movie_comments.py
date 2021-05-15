@@ -98,7 +98,7 @@ def parse_page(html):
 
 # 保存数据
 def write_to_file(info):
-    with open('comments.csv', 'w', newline='', encoding='utf-8-sig') as f:
+    with open('comments.csv', 'a', newline='', encoding='utf-8-sig') as f:
         fieldnames = ['Vote_num', 'User', 'Star', 'Time', 'Comment']
         writer = csv.DictWriter(f, fieldnames=fieldnames)
         writer.writeheader()

@@ -11,12 +11,22 @@ import codecs
 from bs4 import BeautifulSoup  
 from urllib import unquote
 from decimal import Decimal
+from headers_config import USERAGENT_CONFIG
 import time
 reload(sys)
 sys.setdefaultencoding("utf-8")
 
 RESULT = {}
-movie_info_file = "movie_info.txt"
+movie_info_file = "movie_info_with_jpg.txt"
+
+proxies = {
+"https": "https://10.90.44.226:10101",
+"https": "https://10.90.45.9:10101",
+"https": "https://172.17.49.80:10101",
+"https": "https://172.17.49.81:10101",
+"https": "https://10.70.113.196:10101"
+}
+
 
 # header content
 douban_headers = {
@@ -78,7 +88,17 @@ def get_celebrity_detailed_info(celebrity_id):
     else:
         celebrity_info['error'] = None
     url_link = 'https://movie.douban.com{0}' .format(celebrity_id)
-    r = requests.get(url_link, headers=douban_headers)
+    try:
+        r = requests.get(url_link, headers=douban_headers, verify=False, proxies=proxies)
+    except:
+        random_useragent = random.choice(USERAGENT_CONFIG)
+        r = requests.get(url_link, headers={'User-Agent': random_useragent} ,verify=False)
+        #r = requests.get(url_link, headers={'User-Agent': 'Mozilla/5.0 (Linux; Android 6.0.1; Nexus 5X Build/MMB29P) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.96 Mobile Safari/537.36 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)'}, verify=False, proxies=proxies)
+        if r.status_code == 200:
+            pass
+        else:
+            r = requests.get(url_link, headers=douban_headers, verify=False)
+    print r.status_code
     soup = BeautifulSoup(r.text.encode('utf-8'), 'lxml')
     try:
         soup_fans = soup.select('div[id="fans"]')[0].h2.find(text=re.compile("影迷".decode("utf-8"))).split('\n')[1]
@@ -146,6 +166,17 @@ def get_celebrity_detailed_info(celebrity_id):
     except:
         celebrity_info['imdb_number'] = 'N/A'
 
+    try:
+        masterpiece = " / ".join(soup.find("a", class_="lnk-sharing")['data-desc'].replace(' ','').split('/')[-3:])
+        celebrity_info['masterpiece'] = masterpiece
+    except:
+        celebrity_info['masterpiece'] = 'N/A'
+
+    try:
+        image = soup.find("a", class_="lnk-sharing")['data-image']
+        celebrity_info['image'] = image
+    except:
+        celebrity_info['image'] = 'N/A'
 
     return celebrity_info
 
@@ -156,7 +187,7 @@ def get_movie_detailed_info(f):
         for subject_id in f:
             subject_id = subject_id.strip()
             url_link = 'https://movie.douban.com/subject/{0}' .format(subject_id)
-            r = requests.get(url_link, headers=douban_headers)
+            r = requests.get(url_link, headers=douban_headers, verify=False)
             if r.status_code == 200:
                 movie_error = None
             else:
@@ -191,7 +222,7 @@ def get_movie_detailed_info(f):
                 position_list = ['director', 'actor']
                 # init vars
                 person_id = gender = constellation = birthday = deathday = birth_place = profession \
-                          = other_foreign_name = other_chinese_name = imdb_number = 'N/A'
+                          = other_foreign_name = other_chinese_name = imdb_number = masterpiece = image = 'N/A'
                 fans_num = 0
                 print '---导演---\n'
                 for i in position_list:
@@ -199,17 +230,18 @@ def get_movie_detailed_info(f):
                     if len(movie_json[i]) == 0:
                         celebrity_name = directedBy if i == 'director' else cast
                         movie_info = "{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}\t{8}\t{9}\t{10}\t{11}\t{12} \
-                                      \t{13}\t{14}\t{15}" .format(subject_id, movie_type, movie_name, person_id, 
+                                      \t{13}" .format(subject_id, movie_type, movie_name, person_id, 
                                                                   position, celebrity_name, fans_num, gender, 
                                                                   constellation, birthday, deathday, birth_place,
-                                                                  profession, other_foreign_name, other_chinese_name,
-                                                                  imdb_number)
+                                                                  masterpiece, image
+                                                                 )
                         movie_info_list.append(movie_info)
                         print movie_name, movie_type, celebrity_name
                     else:
-                        for person in  movie_json[i][0:2]:
+                        for person in  movie_json[i][0:5]:
                             name = person.get('name', 'N/A')
                             person_id = person.get('url', 'N/A')
+                            print person_id, movie_json
                             if len(re.findall(pattern, name)) == 0:
                                 # get original name if chinese name does not exist
                                 celebrity_name = name
@@ -225,7 +257,8 @@ def get_movie_detailed_info(f):
                                 celebrity_info = get_celebrity_detailed_info(person_id)
                                 RESULT[person_id] = celebrity_info
                                 store_to_file(**RESULT)
-                                sleeptime = random.uniform(1000, 1280)
+                                sleeptime = random.uniform(750, 970)
+                                sleeptime = random.uniform(150, 170)
                                 sleeptime = Decimal(sleeptime).quantize(Decimal('0.00'))
                                 time.sleep(sleeptime)
                             fans_num = celebrity_info['fans']
@@ -238,16 +271,19 @@ def get_movie_detailed_info(f):
                             other_foreign_name = celebrity_info['other_foreign_name']
                             other_chinese_name = celebrity_info['other_chinese_name']
                             imdb_number = celebrity_info['imdb_number']
+                            masterpiece = celebrity_info['masterpiece']
+                            image = celebrity_info['image']
 
                             movie_info = "{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}\t{8}\t{9} \
-                                          \t{10}\t{11}\t{12}\t{13}\t{14}\t{15}"  \
+                                          \t{10}\t{11}\t{12}\t{13}"  \
                                          .format(subject_id, movie_type, movie_name, person_id, position,
                                                 celebrity_name, fans_num, gender, constellation, birthday,
-                                                deathday, birth_place, profession, other_foreign_name,
-                                                other_chinese_name, imdb_number)
+                                                deathday, birth_place, masterpiece, image)
                             movie_info_list.append(movie_info)
-                            print subject_id, movie_type, movie_name, position, celebrity_name, person_id, fans_num, gender, constellation, birthday, deathday, birth_place, profession, other_foreign_name, other_chinese_name, imdb_number
-            sleeptime = random.uniform(2770, 3270)
+                            write_to_csv(f_csv, head_instruction, *movie_info_list)
+                            print subject_id, movie_type, movie_name, position, celebrity_name, person_id, fans_num, gender, constellation, birthday, deathday, birth_place
+            #sleeptime = random.uniform(660, 890)
+            sleeptime = random.uniform(120, 160)
             sleeptime = Decimal(sleeptime).quantize(Decimal('0.00'))
             time.sleep(sleeptime)
     return movie_info_list
@@ -258,6 +294,6 @@ if __name__ == '__main__':
     f = 'movie.list'
     f_csv = 'movie.csv'
     head_instruction = "subject_id\ttype\t中文名\tcelebrity_id\tposition\tcelebrity_name\t收藏数 \
-                        \t性别\t星座\t出生日期\t逝世日期\t出生地\t职业\t更多外文名\t更多中文名\timdb编号"
+                        \t性别\t星座\t出生日期\t逝世日期\t出生地\t代表作\t影人图片"
     movie_info_list = get_movie_detailed_info(f)
     write_to_csv(f_csv, head_instruction, *movie_info_list)

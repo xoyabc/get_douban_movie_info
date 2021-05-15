@@ -11,6 +11,7 @@ import codecs
 from bs4 import BeautifulSoup  
 from urllib import unquote
 from decimal import Decimal
+from headers_config import USERAGENT_CONFIG
 import time
 reload(sys)
 sys.setdefaultencoding("utf-8")
@@ -47,7 +48,11 @@ def get_celebrity_detailed_info(celebrity_id):
     else:
         celebrity_info['error'] = None
     url_link = 'https://movie.douban.com{0}' .format(celebrity_id)
-    r = requests.get(url_link, headers=douban_headers)
+    try:
+        random_useragent = random.choice(USERAGENT_CONFIG)
+        r = requests.get(url_link, headers={'User-Agent': random_useragent} ,verify=False)
+    except:
+        r = requests.get(url_link, headers=douban_headers ,verify=False)
     soup = BeautifulSoup(r.text.encode('utf-8'), 'lxml')
     try:
         soup_fans = soup.select('div[id="fans"]')[0].h2.find(text=re.compile("影迷".decode("utf-8"))).split('\n')[1]
@@ -113,11 +118,17 @@ def get_movie_base_info(subject):
     url_link = 'https://movie.douban.com/subject/{0}' .format(subject)
     #url_link = 'https://movie.douban.com/subject/1296500'
     # request douban
-    r = requests.get(url_link, headers=douban_headers)
-    if r.status_code == 200:
-        movie_info['error'] = None
-    else:
-        movie_info['error'] = 'request error'
+    try:
+        random_useragent = random.choice(USERAGENT_CONFIG)
+        r = requests.get(url_link, headers={'User-Agent': random_useragent} ,verify=False)
+    except:
+        r = requests.get(url_link, headers=douban_headers ,verify=False)
+    finally:
+        if r.status_code == 200:
+            movie_info['error'] = None
+        else:
+            movie_info['error'] = 'request error'
+            return movie_info
     # store the html data to soup
     soup = BeautifulSoup(r.text.encode('utf-8'), 'lxml')
     # deal with page not found
@@ -151,7 +162,7 @@ def get_movie_base_info(subject):
     except IndexError:
         rating_info = "无评分项"
     # type, name, duration, director, actor, genre, ratingCount, ratingValue
-    script_json = soup.find_all(attrs={'type' : 'application/ld+json'})[0].get_text()
+    script_json = soup.find_all(attrs={'type' : 'application/ld+json'})[0].contents[0].strip()
     movie_json = json.loads(script_json, strict=False)
     movie_info['type'] = movie_json.get('@type', 'N/A')
     #movie_info['name'] = movie_json.get('name', 'N/A').split()[0]
@@ -248,7 +259,9 @@ def get_movie_base_info(subject):
     else:
         movie_info['director'] = directedBy
     # deal with actor
-    if cast == 'N/A':
+    # add 'cast != actor' to deal with the subject when first starring in 'v:starring' is not in accord with the 
+    # first element of "actor" list in 'application/ld+json', such as https://movie.douban.com/subject/1299832/
+    if cast == 'N/A' or cast != actor:
         movie_info['actor'] = actor
     else:
         movie_info['actor'] = cast
@@ -270,7 +283,7 @@ def get_movie_detailed_info(f):
         movie_info_list = []
         for subject_id in f:
             subject_id = subject_id.strip()
-            data = get_movie_base_info(subject_id)
+            #data = get_movie_base_info(subject_id)
             try:
                 data = get_movie_base_info(subject_id)
                 # print "{0} {1}" .format(subject_id, data['error'])
