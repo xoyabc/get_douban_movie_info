@@ -15,6 +15,8 @@ from headers_config import USERAGENT_CONFIG
 import time
 reload(sys)
 sys.setdefaultencoding("utf-8")
+import urllib3
+urllib3.disable_warnings()
 
 
 # header content
@@ -77,7 +79,7 @@ def get_celebrity_detailed_info(celebrity_id):
     try:
         birthday_anchor = soup.find("span", text=re.compile("出生日期".decode("utf-8")))
         birthday = birthday_anchor.next_element.next_element.strip().split('\n')[1].strip()    
-    except AttributeError:
+    except:
         birthday = 'N/A'
     
     try:
@@ -283,7 +285,7 @@ def get_movie_detailed_info(f):
         movie_info_list = []
         for subject_id in f:
             subject_id = subject_id.strip()
-            #data = get_movie_base_info(subject_id)
+            data = get_movie_base_info(subject_id)
             try:
                 data = get_movie_base_info(subject_id)
                 # print "{0} {1}" .format(subject_id, data['error'])
