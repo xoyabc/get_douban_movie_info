@@ -74,7 +74,7 @@ def get_movie_base_info(subject):
         #    award_info.append(" / ".join([ x.text.replace('\n','') for x in i.find_all('li')[0:2]]))
         #movie_info['award'] = "award".join(award_info)
     if len(soup.select('ul[class="award"]')[0:2]) > 0:
-        for i in soup.select('div[class="awards"]')[0:2]:
+        for i in soup.select('div[class="awards"]')[0:5]:
             ff_name = i.h2.a.text
             ff_year = i.h2.span.text
             #ff_unit = i.select('ul[class="award"]')[0].find('li').text
