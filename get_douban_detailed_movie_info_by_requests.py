@@ -57,12 +57,15 @@ def get_celebrity_detailed_info(celebrity_id):
         r = requests.get(url_link, headers=douban_headers ,verify=False)
     soup = BeautifulSoup(r.text.encode('utf-8'), 'lxml')
     try:
-        soup_fans = soup.select('div[id="fans"]')[0].h2.find(text=re.compile("影迷".decode("utf-8"))).split('\n')[1]
-        celebrity_info['fans'] = re.match(r'^.*?([0-9]+).*$', soup_fans).group(1)
+        #soup_fans = soup.select('div[id="fans"]')[0].h2.find(text=re.compile("影迷".decode("utf-8"))).split('\n')[1]
+        #celebrity_info['fans'] = re.match(r'^.*?([0-9]+).*$', soup_fans).group(1)
+        soup_fans = soup.select('span[id="fans_count"]')[0].text
+        celebrity_info['fans'] = soup_fans
     except:
         celebrity_info['fans'] = 'N/A'
 
-    celebrity_info['celebrity_name'] = re.sub(u' \(豆瓣\)', '' ,soup.title.text.strip())
+    celebrity_info['celebrity_name'] = re.sub(u' \(豆瓣\)', '' ,soup.title.text.strip()).split()[0]
+    #print "celebrity_name:{}" .format(celebrity_info['celebrity_name'])
     
     try:
         gender_anchor = soup.find("span", text=re.compile("性别".decode("utf-8")))
@@ -285,7 +288,7 @@ def get_movie_detailed_info(f):
         movie_info_list = []
         for subject_id in f:
             subject_id = subject_id.strip()
-            data = get_movie_base_info(subject_id)
+            #data = get_movie_base_info(subject_id)
             try:
                 data = get_movie_base_info(subject_id)
                 # print "{0} {1}" .format(subject_id, data['error'])
