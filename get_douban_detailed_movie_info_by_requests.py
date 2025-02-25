@@ -286,6 +286,8 @@ def get_movie_base_info(subject):
 def get_movie_detailed_info(f):
     with open(f,'rU') as f:
         movie_info_list = []
+        line_num = sum(1 for line in f)
+        f.seek(0)  # 重置文件指针到文件开始
         for subject_id in f:
             subject_id = subject_id.strip()
             #data = get_movie_base_info(subject_id)
@@ -310,7 +312,6 @@ def get_movie_detailed_info(f):
             movie_info_list.append(movie_info)
             print movie_info_list
             #sleeptime = random.uniform(0, 2)
-            line_num = sum(1 for line in f)
             if line_num < 20:
                 sleeptime = random.uniform(1, 3)
             elif line_num >= 20 and line_num < 50:
