@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/root/miniconda2/bin/python2.7
 # -*- coding: utf-8 -*-
 import re  
 import sys  
@@ -44,22 +44,25 @@ def write_to_csv(filename, head_line, *info_list):
 
 def get_celebrity_detailed_info(celebrity_id):
     celebrity_info = {}
-    if 'celebrity' not in celebrity_id:
+    if 'personage' not in celebrity_id:
         celebrity_info['error'] = 'invalid format'
         return celebrity_info
     else:
         celebrity_info['error'] = None
-    url_link = 'https://movie.douban.com{0}' .format(celebrity_id)
+    url_link = 'https://www.douban.com{0}' .format(celebrity_id)
+    print "url_link:{}" .format(url_link)
     try:
         random_useragent = random.choice(USERAGENT_CONFIG)
         r = requests.get(url_link, headers={'User-Agent': random_useragent} ,verify=False)
     except:
         r = requests.get(url_link, headers=douban_headers ,verify=False)
     soup = BeautifulSoup(r.text.encode('utf-8'), 'lxml')
+    soup_fans = soup.select('span[id="fans_count"]')[0].text
+    print "soup_fans:{}" .format(soup_fans)
     try:
         #soup_fans = soup.select('div[id="fans"]')[0].h2.find(text=re.compile("影迷".decode("utf-8"))).split('\n')[1]
         #celebrity_info['fans'] = re.match(r'^.*?([0-9]+).*$', soup_fans).group(1)
-        soup_fans = soup.select('span[id="fans_count"]')[0].text
+        soup_fans = int(soup.select('span[id="fans_count"]')[0].text)
         celebrity_info['fans'] = soup_fans
     except:
         celebrity_info['fans'] = 'N/A'
@@ -69,44 +72,51 @@ def get_celebrity_detailed_info(celebrity_id):
     
     try:
         gender_anchor = soup.find("span", text=re.compile("性别".decode("utf-8")))
-        gender = gender_anchor.next_element.next_element.strip().split('\n')[1].strip() 
-    except AttributeError:
+        #gender = gender_anchor.next_element.next_element.strip().split('\n')[1].strip() 
+        gender = gender_anchor.next_element.next_element.next_element.text.strip()
+    except:
         gender = 'N/A'
 
     try:
         constellation_anchor = soup.find("span", text=re.compile("星座".decode("utf-8")))
-        constellation = constellation_anchor.next_element.next_element.strip().split('\n')[1].strip()      
-    except AttributeError:
+        #constellation = constellation_anchor.next_element.next_element.strip().split('\n')[1].strip()      
+        constellation = constellation_anchor.next_element.next_element.next_element.text.strip()
+    except:
         constellation = 'N/A'
     
     try:
         birthday_anchor = soup.find("span", text=re.compile("出生日期".decode("utf-8")))
-        birthday = birthday_anchor.next_element.next_element.strip().split('\n')[1].strip()    
+        #birthday = birthday_anchor.next_element.next_element.strip().split('\n')[1].strip()    
+        birthday = birthday_anchor.next_element.next_element.next_element.text.strip()
     except:
         birthday = 'N/A'
     
     try:
         birth_place_anchor = soup.find("span", text=re.compile("出生地".decode("utf-8")))
-        birth_place = birth_place_anchor.next_element.next_element.strip().split('\n')[1].strip()    
-    except AttributeError:
+        #birth_place = birth_place_anchor.next_element.next_element.strip().split('\n')[1].strip()    
+        birth_place = birth_place_anchor.next_element.next_element.next_element.text.strip()
+    except:
         birth_place = 'N/A'
     
     try:
         profession_anchor = soup.find("span", text=re.compile("职业".decode("utf-8")))
-        profession = profession_anchor.next_element.next_element.strip().split('\n')[1].strip()    
-    except AttributeError:
+        #profession = profession_anchor.next_element.next_element.strip().split('\n')[1].strip()    
+        profession = profession_anchor.next_element.next_element.next_element.text.strip()
+    except:
         profession = 'N/A'
     
     try:
         other_foreign_name_anchor = soup.find("span", text=re.compile("更多外文名".decode("utf-8")))
-        other_foreign_name = other_foreign_name_anchor.next_element.next_element.strip().split('\n')[1].strip()    
+        #other_foreign_name = other_foreign_name_anchor.next_element.next_element.strip().split('\n')[1].strip()    
+        other_foreign_name = other_foreign_name_anchor.next_element.next_element.next_element.text.strip()
     except:
         other_foreign_name = 'N/A'
     
     try:
         other_chinese_name_anchor = soup.find("span", text=re.compile("更多中文名".decode("utf-8")))
         #other_chinese_name = other_chinese_name_anchor.next_element.next_element.strip().split('\n')[1].strip()
-        other_chinese_name = "/".join([ x for x in other_chinese_name_anchor.next_element.next_element.strip().split('\n')[1].strip().split('/') if '昵称xxx' in x ])
+        #other_chinese_name = "/".join([ x for x in other_chinese_name_anchor.next_element.next_element.strip().split('\n')[1].strip().split('/') if '昵称xxx' in x ])
+        other_chinese_name = "/".join([ x for x in other_chinese_name_anchor.next_element.next_element.next_element.text.strip().split('/') if '昵称xxx' in x ])
     except:
         other_chinese_name = 'N/A'
     
@@ -187,6 +197,8 @@ def get_movie_base_info(subject):
         actor_id = movie_json['actor'][0].get('url', 'N/A')
     except IndexError:
         actor  = 'N/A'
+    #print "director_id:{}" .format(director_id)
+    #print "actor_id:{}" .format(actor_id)
     try:
         movie_info['genre'] = 'N/A' if len(movie_json.get('genre')) < 1 else "/".join(movie_json.get('genre', ['N/A']))
     except IndexError:
@@ -202,13 +214,16 @@ def get_movie_base_info(subject):
     subuject_info_result = soup.find_all(attrs={'id' : 'info'})[0]
     directedBy_id = cast_id = 'N/A'
     try:
-        directedBy = subuject_info_result.find('a', attrs={"rel": "v:directedBy"}).text
+        #directedBy = subuject_info_result.find('a', attrs={"rel": "v:directedBy"}).text
+        directedBy = "/".join([ x.text for x in subuject_info_result.select('a[rel="v:directedBy"]')[0:2] ])
     except AttributeError:
         directedBy = 'N/A'
     # get directedBy celebrity id
     try:
-        if 'celebrity' in subuject_info_result.find('a', attrs={"rel": "v:directedBy"})['href']:
-            directedBy_id = subuject_info_result.find('a', attrs={"rel": "v:directedBy"})['href']
+        if 'personage' in subuject_info_result.find('a', attrs={"rel": "v:directedBy"})['href']:
+            #directedBy_id = subuject_info_result.find('a', attrs={"rel": "v:directedBy"})['href']
+            #directedBy_id = directedBy_id.replace('https://www.douban.com', '')
+            directedBy_id = [ x['href'].replace('https://www.douban.com', '') for x in subuject_info_result.select('a[rel="v:directedBy"]')[0:2] ]
     except TypeError:
         directedBy_id = 'N/A'
     print "directedBy_id:{}" .format(directedBy_id)
@@ -218,8 +233,9 @@ def get_movie_base_info(subject):
         cast = 'N/A'
     # get cast celebrity id
     try:
-        if 'celebrity' in subuject_info_result.find('a', attrs={"rel": "v:starring"})['href']:
+        if 'personage' in subuject_info_result.find('a', attrs={"rel": "v:starring"})['href']:
             cast_id = subuject_info_result.find('a', attrs={"rel": "v:starring"})['href']
+            cast_id = cast_id.replace('https://www.douban.com', '')
     except TypeError:
         cast_id = 'N/A'
     print "cast_id:{}" .format(cast_id)
@@ -271,11 +287,14 @@ def get_movie_base_info(subject):
     else:
         movie_info['actor'] = cast
     # get fans of director
+    print "director url and fans:"
     if directedBy_id == 'N/A':
         movie_info['director_fans'] = get_celebrity_detailed_info(director_id).get('fans', 0)
     else:
-        movie_info['director_fans'] = get_celebrity_detailed_info(directedBy_id).get('fans', 0)
+        #movie_info['director_fans'] = get_celebrity_detailed_info(directedBy_id).get('fans', 0)
+        movie_info['director_fans'] = sum([ get_celebrity_detailed_info(x).get('fans', 0) for x in directedBy_id ])
     # get fans of actor
+    print "actor url and fans:"
     if cast_id == 'N/A':
         movie_info['actor_fans'] = get_celebrity_detailed_info(actor_id).get('fans', 0)
     else:
