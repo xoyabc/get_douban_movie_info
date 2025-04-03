@@ -1,7 +1,8 @@
 #!/bin/bash
 
 > douban_subjects
-doulist_id="158527432"
+#doulist_id="158527432"
+doulist_id=${1:-158527432}
 
 total_num=$(curl -s "https://www.douban.com/doulist/${doulist_id}/" |pup '[class="doulist-filter"] a:first-child span text{}' |sed -r 's#\((.*)\)#\1#g')
 
