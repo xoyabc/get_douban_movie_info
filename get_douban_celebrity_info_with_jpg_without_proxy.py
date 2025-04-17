@@ -88,8 +88,10 @@ def get_celebrity_detailed_info(celebrity_id):
     else:
         celebrity_info['error'] = None
     url_link = 'https://movie.douban.com{0}' .format(celebrity_id)
+    print ("url_link: ", url_link)
     try:
-        r = requests.get(url_link, headers=douban_headers, verify=False)
+        #r = requests.get(url_link, headers=douban_headers, verify=False, allow_redirects=True)
+        r = requests.get(url_link, headers={'User-Agent': 'curl/7.61.1'} ,verify=False)
     except:
         random_useragent = random.choice(USERAGENT_CONFIG)
         r = requests.get(url_link, headers={'User-Agent': random_useragent} ,verify=False)
@@ -97,65 +99,73 @@ def get_celebrity_detailed_info(celebrity_id):
         if r.status_code == 200:
             pass
         else:
-            r = requests.get(url_link, headers=douban_headers, verify=False)
+            r = requests.get(url_link, headers=douban_headers, verify=False, allow_redirects=True)
     print r.status_code
     soup = BeautifulSoup(r.text.encode('utf-8'), 'lxml')
     try:
-        soup_fans = soup.select('div[id="fans"]')[0].h2.find(text=re.compile("影迷".decode("utf-8"))).split('\n')[1]
-        celebrity_info['fans'] = re.match(r'^.*?([0-9]+).*$', soup_fans).group(1)
+        #soup_fans = soup.select('div[id="fans"]')[0].h2.find(text=re.compile("影迷".decode("utf-8"))).split('\n')[1]
+        #celebrity_info['fans'] = re.match(r'^.*?([0-9]+).*$', soup_fans).group(1)
+        soup_fans = int(soup.select('span[id="fans_count"]')[0].text)
+        celebrity_info['fans'] = soup_fans
     except:
         celebrity_info['fans'] = 'N/A'
 
-    celebrity_info['celebrity_name'] = re.sub(u' \(豆瓣\)', '' ,soup.title.text.strip())
+    #celebrity_info['celebrity_name'] = re.sub(u' \(豆瓣\)', '' ,soup.title.text.strip())
+    celebrity_info['celebrity_name'] = re.sub(u' \(豆瓣\)', '' ,soup.title.text.strip()).split()[0]
     
     try:
         gender_anchor = soup.find("span", text=re.compile("性别".decode("utf-8")))
-        celebrity_info['gender'] = gender_anchor.next_element.next_element.strip().split('\n')[1].strip() 
+        celebrity_info['gender'] = gender_anchor.next_element.next_element.next_element.text.strip()
     except AttributeError:
         celebrity_info['gender'] = 'N/A'
 
     try:
         constellation_anchor = soup.find("span", text=re.compile("星座".decode("utf-8")))
-        celebrity_info['constellation'] = constellation_anchor.next_element.next_element.strip().split('\n')[1].strip()      
+        #celebrity_info['constellation'] = constellation_anchor.next_element.next_element.strip().split('\n')[1].strip()      
+        celebrity_info['constellation'] = constellation_anchor.next_element.next_element.next_element.text.strip()
     except AttributeError:
         celebrity_info['constellation'] = 'N/A'
     
     try:
         birthday_anchor = soup.find("span", text=re.compile("出生日期".decode("utf-8")))
-        celebrity_info['birthday'] = birthday_anchor.next_element.next_element.strip().split('\n')[1].strip()    
+        #celebrity_info['birthday'] = birthday_anchor.next_element.next_element.strip().split('\n')[1].strip()    
+        celebrity_info['birthday'] = birthday_anchor.next_element.next_element.next_element.text.strip()
     except:
         celebrity_info['birthday'] = 'N/A'
 
     try:
-        birthday_anchor = soup.find("span", text=re.compile("生卒日期".decode("utf-8")))
-        celebrity_info['birthday'] = birthday_anchor.next_element.next_element.strip().split('\n')[1].strip().split()[0]
-        celebrity_info['deathday'] = birthday_anchor.next_element.next_element.strip().split('\n')[1].strip().split()[2]
+        birthday_anchor = soup.find("span", text=re.compile("去世日期".decode("utf-8")))
+        #celebrity_info['birthday'] = birthday_anchor.next_element.next_element.next_element.text.strip().split()[0]
+        celebrity_info['deathday'] = birthday_anchor.next_element.next_element.next_element.text.strip()
     except AttributeError:
         celebrity_info['deathday'] = 'N/A'
 
     try:
         birth_place_anchor = soup.find("span", text=re.compile("出生地".decode("utf-8")))
-        celebrity_info['birth_place'] = birth_place_anchor.next_element.next_element.strip().split('\n')[1].strip()    
+        #celebrity_info['birth_place'] = birth_place_anchor.next_element.next_element.strip().split('\n')[1].strip()    
+        celebrity_info['birth_place'] = birth_place_anchor.next_element.next_element.next_element.text.strip()
     except AttributeError:
         celebrity_info['birth_place'] = 'N/A'
     
     try:
         profession_anchor = soup.find("span", text=re.compile("职业".decode("utf-8")))
-        celebrity_info['profession'] = profession_anchor.next_element.next_element.strip().split('\n')[1].strip()    
+        #celebrity_info['profession'] = profession_anchor.next_element.next_element.strip().split('\n')[1].strip()    
+        celebrity_info['profession'] = profession_anchor.next_element.next_element.next_element.text.strip()
     except AttributeError:
         celebrity_info['profession'] = 'N/A'
     
     try:
         other_foreign_name_anchor = soup.find("span", text=re.compile("更多外文名".decode("utf-8")))
-        foreign_nick_name = "/".join([ x for x in other_foreign_name_anchor.next_element.next_element.strip().split('\n')[1].strip().split('/ ') if '昵称' in x ])
+        #foreign_nick_name = "/".join([ x for x in other_foreign_name_anchor.next_element.next_element.strip().split('\n')[1].strip().split('/ ') if '昵称' in x ])
+        foreign_nick_name = "/".join([ x for x in other_foreign_name_anchor.next_element.next_element.next_element.text.strip().split('/ ') if '昵称' in x ])
         celebrity_info['other_foreign_name'] = 'N/A' if foreign_nick_name == '' else foreign_nick_name
     except:
         celebrity_info['other_foreign_name'] = 'N/A'
     
     try:
         other_chinese_name_anchor = soup.find("span", text=re.compile("更多中文名".decode("utf-8")))
-        #other_chinese_name = other_chinese_name_anchor.next_element.next_element.strip().split('\n')[1].strip()
-        chinese_nick_name = "/".join([ x for x in other_chinese_name_anchor.next_element.next_element.strip().split('\n')[1].strip().split('/ ') if '昵称' in x ])
+        #chinese_nick_name = "/".join([ x for x in other_chinese_name_anchor.next_element.next_element.strip().split('\n')[1].strip().split('/ ') if '昵称' in x ])
+        chinese_nick_name = "/".join([ x for x in other_chinese_name_anchor.next_element.next_element.next_element.text.strip().split('/ ') if '昵称' in x ])
         celebrity_info['other_chinese_name'] = 'N/A' if chinese_nick_name == '' else chinese_nick_name
     except:
         celebrity_info['other_chinese_name'] = 'N/A'
@@ -167,14 +177,14 @@ def get_celebrity_detailed_info(celebrity_id):
         celebrity_info['imdb_number'] = 'N/A'
 
     try:
-        masterpiece = " / ".join(soup.find("a", class_="lnk-sharing")['data-desc'].replace(' ','').split('/')[-3:])
+        masterpiece = " / ".join(soup.find("a", class_="lnk-sharing")['data-desc'].split(' / ')[-1].split())
         celebrity_info['masterpiece'] = masterpiece
     except:
         celebrity_info['masterpiece'] = 'N/A'
 
     try:
         #image = soup.find("a", class_="lnk-sharing")['data-image']
-        image = soup.find("div", class_="nbg").img['src']
+        image = soup.find("div", class_="avatar-container").img['src']
         if 'celebrity-default-medium' in image:
             image = 'N/A'
         celebrity_info['image'] = image
