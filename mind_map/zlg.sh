@@ -1,7 +1,7 @@
 #!/bin/bash
 
 FILE=${1:-movie-zlg.csv}
-OUT_FILE=$(echo ${FILE} |tr -d '.csv' |awk '{print $1".md"}')
+OUT_FILE=$(echo ${FILE} |sed 's#.csv##g')
 dos2unix ${FILE}
 > ${OUT_FILE}
 
