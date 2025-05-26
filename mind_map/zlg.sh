@@ -14,7 +14,7 @@ fi
 # title
 if [ $1 = "movie-jnfg.csv" ]
 then
-echo "## 2025.05 江南分馆日常放映片单  
+echo "# 2025.05 江南分馆日常放映片单  
 ### 基本信息
  - 数据来源：特工队头目 所建豆列
  - 制作：vow" >> ${OUT_FILE}
