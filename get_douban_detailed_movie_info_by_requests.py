@@ -183,6 +183,7 @@ def get_movie_base_info(subject):
     #movie_info['name'] = movie_json.get('name', 'N/A').split()[0]
     movie_info['name'] = re.sub(u' \(豆瓣\)', '' ,soup.title.text.strip())
     actor_id = director_id = 'N/A'
+    director = directedBy = 'N/A'
     try:
         movie_info['duration'] = 'N/A' if movie_json['duration'] == '' else movie_json.get('duration', 'N/A').replace('PT', '')
     except Exception:
@@ -190,7 +191,7 @@ def get_movie_base_info(subject):
     try:
         director =  movie_json['director'][0].get('name', 'N/A').split()[0]
         director_id = movie_json['director'][0].get('url', 'N/A')
-    except IndexError:
+    except:
         director = 'N/A'
     try:
         actor  = movie_json['actor'][0].get('name', 'N/A').split()[0]
@@ -216,7 +217,9 @@ def get_movie_base_info(subject):
     try:
         #directedBy = subuject_info_result.find('a', attrs={"rel": "v:directedBy"}).text
         directedBy = "/".join([ x.text for x in subuject_info_result.select('a[rel="v:directedBy"]')[0:2] ])
-    except AttributeError:
+        if directedBy == '':
+            directedBy = 'N/A'
+    except:
         directedBy = 'N/A'
     # get directedBy celebrity id
     try:
@@ -316,7 +319,9 @@ def get_movie_detailed_info(f):
                 if data['error'] is not None:
                     movie_info = "{0}\t{1}" .format(subject_id,data['error'])
                 else:
-                    movie_info = "{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}\t{8}\t{9}\t{10}\t{11}\t{12}\t{13}\t{14}\t{15}" \
+                    director_and_actor_fans = int(data['actor_fans']) + \
+                                              int(data['director_fans'])
+                    movie_info = "{0}\t{1}\t{2}\t{3}\t{4}\t{5}\t{6}\t{7}\t{8}\t{9}\t{10}\t{11}\t{12}\t{13}\t{14}\t{15}\t{16}" \
                                             .format(
                                                 subject_id,data['type'],
                                                 data['name'],data['year'],data['duration'],
@@ -325,7 +330,8 @@ def get_movie_detailed_info(f):
                                                 data['release_date'],
                                                 data['language'],data['genre'], data['actor'],
                                                 data['actor_fans'], data['director'],
-                                                data['director_fans'], data['imdb_number'])
+                                                data['director_fans'],
+                                                director_and_actor_fans, data['imdb_number'])
             except Exception:
                 movie_info = "{0}\tinternal_running_error" .format(subject_id)
             movie_info_list.append(movie_info)
@@ -334,9 +340,9 @@ def get_movie_detailed_info(f):
             if line_num < 20:
                 sleeptime = random.uniform(1, 3)
             elif line_num >= 20 and line_num < 50:
-                sleeptime = random.uniform(5, 10)
+                sleeptime = random.uniform(8, 12)
             else:
-                sleeptime = random.uniform(8, 15)
+                sleeptime = random.uniform(15, 20)
             sleeptime = Decimal(sleeptime).quantize(Decimal('0.00'))
             time.sleep(sleeptime)
     return movie_info_list
@@ -347,6 +353,6 @@ if __name__ == '__main__':
     # douban movie subject id
     f = 'movie.list'
     f_csv = 'movie.csv'
-    head_instruction = "subject_id\ttype\t中文名\t年份\t片长\t评分\t评价人数\t国家\t上映日期(中国大陆)\t语言\t类型\t主演\t主演收藏数\t导演\t导演收藏数\tIMDB编号"
+    head_instruction = "subject_id\ttype\t中文名\t年份\t片长\t评分\t评价人数\t国家\t上映日期(中国大陆)\t语言\t类型\t主演\t主演收藏数\t导演\t导演收藏数\t导演+主演收藏数\tIMDB编号"
     movie_info_list = get_movie_detailed_info(f)
     write_to_csv(f_csv, head_instruction, *movie_info_list)
