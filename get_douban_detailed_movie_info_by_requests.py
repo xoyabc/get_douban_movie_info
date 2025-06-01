@@ -183,7 +183,6 @@ def get_movie_base_info(subject):
     #movie_info['name'] = movie_json.get('name', 'N/A').split()[0]
     movie_info['name'] = re.sub(u' \(豆瓣\)', '' ,soup.title.text.strip())
     actor_id = director_id = 'N/A'
-    director = directedBy = 'N/A'
     try:
         movie_info['duration'] = 'N/A' if movie_json['duration'] == '' else movie_json.get('duration', 'N/A').replace('PT', '')
     except Exception:
