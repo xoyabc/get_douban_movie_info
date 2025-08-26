@@ -88,8 +88,8 @@ done
 no_and_other_ctry_num=$(cat no_and_ctry |awk -F "," '{num[$7]++}END{for(i in num) print num[i],i}' |sort -nr |awk '$1==1{count++} END {print count}')
 no_and_other_ctry_name=$(cat no_and_ctry |awk -F "," '{num[$7]++}END{for(i in num) print num[i],i}' |sort -nr |awk '$1==1{print $2}' |tr '\n' '|' |sed 's/.$//')
 echo "   - **其他（${no_and_other_ctry_num}部）** " >> ${OUT_FILE}
-cat no_and_ctry |awk -F "," -v ctry="${no_and_other_ctry_name}"  '$7 ~ ctry' |grep -Ev "暂无评分|尚未上映|尚未播出" |awk -F "," '{print "     - 《"$1"》（"$4"年，"$7"，"$8"，"$5"分）"}' >> ${OUT_FILE}
-cat no_and_ctry |awk -F "," -v ctry="${no_and_other_ctry_name}"  '$7 ~ ctry' |grep -E "暂无评分|尚未上映|尚未播出" |awk -F "," '{print "     - 《"$1"》（"$4"年，"$7"，"$8"，"$5"）"}' >> ${OUT_FILE}
+cat no_and_ctry |grep -Ew "${no_and_other_ctry_name}" |awk -F "," -v ctry="${no_and_other_ctry_name}"  '$7 ~ ctry' |grep -Ev "暂无评分|尚未上映|尚未播出" |awk -F "," '{print "     - 《"$1"》（"$4"年，"$7"，"$8"，"$5"分）"}' >> ${OUT_FILE}
+cat no_and_ctry |grep -Ew "${no_and_other_ctry_name}" |awk -F "," -v ctry="${no_and_other_ctry_name}"  '$7 ~ ctry' |grep -E "暂无评分|尚未上映|尚未播出" |awk -F "," '{print "     - 《"$1"》（"$4"年，"$7"，"$8"，"$5"）"}' >> ${OUT_FILE}
 
 # ********************分割线***************************
 # 放过
