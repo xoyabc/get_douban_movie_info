@@ -7,15 +7,13 @@ import time
 import random
 import csv
 from datetime import datetime
+import sys
 
 # ============ 独立 COOKIE 变量配置 ============
 # 默认空，需要时填写：例如 "bid=xxx; douban-fav-remind=1; __utma=xxx;"
-COOKIE = ''
-#COOKIE = 'll="108288"; bid=sWfGIC5wL5s; _pk_id.100001.4cf6=89189f7febdbdf34.1736991508.; __utmc=30149280; __utmc=223695111; _vwo_uuid_v2=D7597C08C263507773B7720B06F2E3CC0|bdc868cb83b404c57a7cbee6654fed67; __utmv=30149280.5752; douban-fav-remind=1; push_doumail_num=0; _ga=GA1.2.1422620472.1757345064; _ga_Y4GN1R87RG=GS2.1.s1757345064$o1$g0$t1757345065$j59$l0$h0; _ga_PRH9EWN86K=GS2.2.s1762224560$o2$g0$t1762224560$j60$l0$h0; ct=y; dbcl2="57525233:zqw4nT9nSMY"; ck=pkQ8; frodotk_db="9214f7f2ae8d9e79b63ee7d80ba8db6b"; push_noty_num=0; _pk_ref.100001.4cf6=%5B%22%22%2C%22%22%2C1767620551%2C%22https%3A%2F%2Fsearch.douban.com%2Fmovie%2Fsubject_search%3Fsearch_text%3D%E9%98%BF%E5%B0%94%E8%8A%AD%26cat%3D1002%22%5D; _pk_ses.100001.4cf6=1; __utma=30149280.1713331435.1736991509.1767614200.1767620551.614; __utmz=30149280.1767620551.614.416.utmcsr=search.douban.com|utmccn=(referral)|utmcmd=referral|utmcct=/movie/subject_search; __utma=223695111.391573458.1736991509.1767618484.1767620551.526; __utmb=223695111.0.10.1767620551; __utmz=223695111.1767620551.526.446.utmcsr=search.douban.com|utmccn=(referral)|utmcmd=referral|utmcct=/movie/subject_search; __utmb=30149280.2.10.1767620551'
+#COOKIE = ''
+COOKIE = 'll="108288"; bid=sWfGIC5wL5s; _pk_id.100001.4cf6=89189f7febdbdf34.1736991508.; __utmc=30149280; __utmc=223695111; _vwo_uuid_v2=D7597C08C263507773B7720B06F2E3CC0|bdc868cb83b404c57a7cbee6654fed67; __utmv=30149280.5752; douban-fav-remind=1; push_doumail_num=0; _ga=GA1.2.1422620472.1757345064; _ga_Y4GN1R87RG=GS2.1.s1757345064$o1$g0$t1757345065$j59$l0$h0; _ga_PRH9EWN86K=GS2.2.s1762224560$o2$g0$t1762224560$j60$l0$h0; ct=y; dbcl2="57525233:zqw4nT9nSMY"; ck=pkQ8; frodotk_db="9214f7f2ae8d9e79b63ee7d80ba8db6b"; push_noty_num=0; _pk_ref.100001.4cf6=%5B%22%22%2C%22%22%2C1767620551%2C%22https%3A%2F%2Fsearch.douban.com%2Fmovie%2Fsubject_search%3Fsearch_text%3D%E9%98%BF%E5%B0%94%E8%8A%AD%26cat%3D1002%22%5D; _pk_ses.100001.4cf6=1; __utma=30149280.1713331435.1736991509.1767614200.1767620551.614; __utmz=30149280.1767620551.614.416.utmcsr=search.douban.com|utmccn=(referral)|utmcmd=referral|utmcct=/movie/subject_search; __utma=223695111.391573458.1736991509.1767618484.1767620551.526; __utmb=223695111.0.10.1767620551; __utmz=223695111.1767620551.526.446.utmcsr=search.douban.com|utmccn=(referral)|utmcmd=referral|utmcct=/movie/subject_search; __utmb=30149280.2.10.1767620551'
 # =============================================
-
-# 豆列基础URL（不含分页参数）
-DOUBAN_LIST_BASE_URL = "https://www.douban.com/doulist/153098286/"
 # 分页参数模板
 PAGE_PARAMS = "?start={}&sort=seq&playable=0&sub_type="
 
@@ -129,7 +127,7 @@ def crawl_single_page(start, total_pages, is_last_page=False):
                     if line.startswith(("导演:", "导演：")):
                         movie_info["导演"] = line.split("：")[-1].strip() if "：" in line else line.split(":")[-1].strip()
                     elif line.startswith(("制片国家/地区:", "制片国家/地区：")):
-                        movie_info["制片国家/地区"] = line.split("：")[-1].strip() if "：" in line else line.split(":")[-1].strip()
+                        movie_info["制片国家/地区"] = line.split("：")[-1].strip() if "：" in line else line.split(":")[-1].strip().split('/', 1)[0]
                     elif line.startswith(("年份:", "年份：")):
                         movie_info["年份"] = line.split("：")[-1].strip() if "：" in line else line.split(":")[-1].strip()
             movie_info.setdefault("导演", "未知")
@@ -260,6 +258,28 @@ def save_to_csv(movie_list):
         print(f"❌ 保存CSV失败：{e}")
 
 if __name__ == "__main__":
+    # ============ 核心：命令行传参 + 兼容处理 ============
+    if len(sys.argv) < 2:
+        print("❌ 请传入豆瓣豆列ID/豆列完整URL作为参数！")
+        print("✅ 运行格式1（推荐）：python3 本脚本名.py 豆列ID")
+        print("✅ 运行格式2：python3 本脚本名.py https://www.douban.com/doulist/豆列ID")
+        print("🔍 示例：python3 get_douban_doulist_info.py 160587626")
+        sys.exit(1)
+    
+    # 获取传入的参数
+    input_param = sys.argv[1].strip()
+    # 正则提取豆列ID，兼容【纯数字】和【完整URL】两种传参方式
+    id_match = re.search(r'(\d{6,})', input_param)
+    if not id_match:
+        print(f"❌ 传入的参数【{input_param}】格式错误！请传入纯数字豆列ID 或 豆瓣豆列完整URL")
+        sys.exit(1)
+    
+    doulist_id = id_match.group(1)
+    # 豆列基础URL（不含分页参数）
+    DOUBAN_LIST_BASE_URL = f"https://www.douban.com/doulist/{doulist_id}/"
+    print(f"\n🚀 开始爬取豆瓣豆列：{DOUBAN_LIST_BASE_URL}")
+    
+    # 执行爬取+保存
     all_movies = crawl_all_pages()
     if all_movies:
         save_to_csv(all_movies)
