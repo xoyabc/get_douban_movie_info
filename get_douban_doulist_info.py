@@ -152,7 +152,8 @@ def crawl_single_page(start, total_pages, is_last_page=False):
                 time_tag = actions_tag.find("time", class_="time")
                 if time_tag:
                     full_time = time_tag.get_text(strip=True)
-                    add_date = full_time.split(" ")[0]
+                    #add_date = full_time.split(" ")[0]
+                    add_date = full_time
                     movie_info["添加日期"] = add_date
                 else:
                     movie_info["添加日期"] = "未知"
