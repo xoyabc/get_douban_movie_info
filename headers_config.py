@@ -1,3 +1,14 @@
+HEADER_CONFIG = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.81 Safari/537.36',
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+    'Accept-Encoding': 'gzip, deflate, sdch',
+    'Accept-Language': 'zh-CN,zh;q=0.8,en-US;q=0.6,en;q=0.4,en-GB;q=0.2,zh-TW;q=0.2',
+    'Connection': 'keep-alive',
+    'DNT': '1',
+    'HOST': 'movie.douban.com',
+    'Cookie': 'bid=HsJsjNjAMW8; _pk_id.100001.4cf6=b1d50a57f469a14d.1767008539.; ll="108288"; _vwo_uuid_v2=D159B0FEAE98E92504C9D5EE1B1FDE8D4|4c028c5dfa7f8d72bb8f8741ccabc525; push_doumail_num=0; push_noty_num=0; ap_v=0,6.0; _pk_ref.100001.4cf6=%5B%22%22%2C%22%22%2C1769354444%2C%22https%3A%2F%2Fsearch.douban.com%2Fmovie%2Fsubject_search%3Fsearch_text%3D%E9%9B%B7%E8%AF%BA%E9%98%BF%26cat%3D1002%22%5D; _pk_ses.100001.4cf6=1; dbcl2="57525233:SL4HN/zDa7M"; ck=SG3K; frodotk_db="d9e27af5413191e38da770dfc394b5a9"'
+    }
+
 USERAGENT_CONFIG = [
 
     "Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 5.1; Maxthon 2.0)",

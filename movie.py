@@ -12,6 +12,7 @@ from bs4 import BeautifulSoup
 from urllib import unquote
 from decimal import Decimal
 import time
+from headers_config import HEADER_CONFIG
 reload(sys)
 sys.setdefaultencoding("utf-8")
 
@@ -39,8 +40,9 @@ def get_movie_base_info(subject):
          'HOST': 'movie.douban.com',
          'Cookie': 'iv5LdR0AXBc'
     }
-    
-    url_link = 'https://movie.douban.com/subject/{0}' .format(subject)
+    douban_headers['Cookie'] = HEADER_CONFIG['Cookie']
+
+    url_link = 'https://movie.douban.com/subject/{0}/' .format(subject)
     #url_link = 'https://movie.douban.com/subject/1296500'
     # request douban
     r = requests.get(url_link, headers=douban_headers)
@@ -199,9 +201,9 @@ def get_movie_detailed_info(f):
             if line_num < 20:
                 sleeptime = random.uniform(1, 3)
             elif line_num >= 20 and line_num < 50:
-                sleeptime = random.uniform(5, 10)
+                sleeptime = random.uniform(8, 12)
             else:
-                sleeptime = random.uniform(8, 15)
+                sleeptime = random.uniform(15, 20)
             sleeptime = Decimal(sleeptime).quantize(Decimal('0.00'))
             time.sleep(sleeptime)
     return movie_info_list
