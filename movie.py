@@ -124,7 +124,6 @@ def get_movie_base_info(subject):
         ratingValue = rating_num
     if isinstance(rating_sum, int):
         ratingCount = rating_sum
-    print (ratingValue,ratingCount)
     movie_info['ratingValue'] = ratingValue
     movie_info['ratingCount'] = ratingCount
     # directedBy, cast, region, language, imdb
