@@ -11,7 +11,7 @@ import codecs
 from bs4 import BeautifulSoup  
 from urllib import unquote
 from decimal import Decimal
-from headers_config import USERAGENT_CONFIG
+from headers_config import USERAGENT_CONFIG,HEADER_CONFIG
 import time
 reload(sys)
 sys.setdefaultencoding("utf-8")
@@ -36,9 +36,9 @@ douban_headers = {
      'Accept-Language': 'zh-CN,zh;q=0.8,en-US;q=0.6,en;q=0.4,en-GB;q=0.2,zh-TW;q=0.2',
      'Connection': 'keep-alive',
      'DNT': '1',
-     'HOST': 'movie.douban.com',
      'Cookie': 'iv5LdR0AXBc'
 }
+douban_headers['Cookie'] = HEADER_CONFIG['Cookie']
 
 
 # write to csv file
@@ -251,7 +251,7 @@ def get_movie_detailed_info(f):
                         movie_info_list.append(movie_info)
                         print movie_name, movie_type, celebrity_name
                     else:
-                        for person in  movie_json[i][0:5]:
+                        for person in  movie_json[i][0:4]:
                             name = person.get('name', 'N/A')
                             person_id = person.get('url', 'N/A')
                             print person_id, movie_json
@@ -270,7 +270,7 @@ def get_movie_detailed_info(f):
                                 celebrity_info = get_celebrity_detailed_info(person_id)
                                 RESULT[person_id] = celebrity_info
                                 store_to_file(**RESULT)
-                                sleeptime = random.uniform(1, 2)
+                                sleeptime = random.uniform(10, 12)
                                 sleeptime = Decimal(sleeptime).quantize(Decimal('0.00'))
                                 time.sleep(sleeptime)
                             fans_num = celebrity_info['fans']
@@ -295,7 +295,7 @@ def get_movie_detailed_info(f):
                             write_to_csv(f_csv, head_instruction, *movie_info_list)
                             print subject_id, movie_type, movie_name, position, celebrity_name, person_id, fans_num, gender, constellation, birthday, deathday, birth_place
             #sleeptime = random.uniform(120, 160)
-            sleeptime = random.uniform(1, 2)
+            sleeptime = random.uniform(20, 35)
             sleeptime = Decimal(sleeptime).quantize(Decimal('0.00'))
             time.sleep(sleeptime)
     return movie_info_list

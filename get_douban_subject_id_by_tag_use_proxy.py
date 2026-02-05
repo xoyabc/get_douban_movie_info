@@ -6,6 +6,7 @@ import sys
 import re
 import random
 import time
+from headers_config import HEADER_CONFIG
 from bs4 import BeautifulSoup
 # solve SNIMissingWarning, InsecurePlatformWarning on urllib3 when using < Python 2.7.9
 import urllib3
@@ -58,6 +59,7 @@ def get_subject(tag, start, end):
              'HOST': 'movie.douban.com',
              'Cookie': 'iv5LdR0AXBc'
         }
+        douban_headers['Cookie'] = HEADER_CONFIG['Cookie']
         print (start)
         payload = {
         'sort': 'T',

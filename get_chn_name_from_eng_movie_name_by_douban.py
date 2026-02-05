@@ -9,6 +9,7 @@ from bs4 import BeautifulSoup
 from urllib import unquote
 from decimal import Decimal
 import time
+from headers_config import HEADER_CONFIG
 reload(sys)
 sys.setdefaultencoding("utf-8")
 
@@ -25,6 +26,7 @@ def serach_movie(movie_name,movie_year):
          'HOST': 'www.douban.com',
          'Cookie': 'iv5LdR0AXBc'
     }
+    douban_headers['Cookie'] = HEADER_CONFIG['Cookie']
     
     #url_link = 'https://www.douban.com/search?cat=1002&q=B.A.Pass.2013'
     url_link = 'https://www.douban.com/search?cat=1002&q={0} {1}' .format(movie_name,movie_year)
