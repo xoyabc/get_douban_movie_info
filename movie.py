@@ -82,6 +82,16 @@ def get_movie_base_info(subject):
         rating_info = soup.find_all(attrs={'class' : 'rating_sum'})[0].text.strip()
     except IndexError:
         rating_info = "无评分项"
+    # rating_num
+    try:
+        rating_num = float(soup.find("strong", property="v:average").get_text(strip=True))
+    except Exception:
+        rating_num = 'N/A'
+    # rating_sum
+    try:
+        rating_sum = int(soup.find("span", property="v:votes").get_text(strip=True))
+    except Exception:
+        rating_sum = 'N/A'
     # type, name, duration, director, actor, genre, ratingCount, ratingValue
     #script_json = soup.find_all(attrs={'type' : 'application/ld+json'})[0].get_text()
     script_json = soup.find_all(attrs={'type' : 'application/ld+json'})[0].contents[0].strip()
@@ -110,6 +120,11 @@ def get_movie_base_info(subject):
     if ratingCount == '0':
         ratingValue = rating_info
         ratingCount = rating_info
+    if isinstance(rating_num, float):
+        ratingValue = rating_num
+    if isinstance(rating_sum, int):
+        ratingCount = rating_sum
+    print (ratingValue,ratingCount)
     movie_info['ratingValue'] = ratingValue
     movie_info['ratingCount'] = ratingCount
     # directedBy, cast, region, language, imdb
