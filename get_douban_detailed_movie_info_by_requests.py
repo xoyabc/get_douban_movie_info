@@ -11,7 +11,7 @@ import codecs
 from bs4 import BeautifulSoup  
 from urllib import unquote
 from decimal import Decimal
-from headers_config import USERAGENT_CONFIG
+from headers_config import USERAGENT_CONFIG,HEADER_CONFIG
 import time
 reload(sys)
 sys.setdefaultencoding("utf-8")
@@ -27,9 +27,9 @@ douban_headers = {
      'Accept-Language': 'zh-CN,zh;q=0.8,en-US;q=0.6,en;q=0.4,en-GB;q=0.2,zh-TW;q=0.2',
      'Connection': 'keep-alive',
      'DNT': '1',
-     'HOST': 'movie.douban.com',
      'Cookie': 'iv5LdR0AXBc'
 }
+douban_headers['Cookie'] = HEADER_CONFIG['Cookie']
 
 # write to csv file
 def write_to_csv(filename, head_line, *info_list):
@@ -53,7 +53,8 @@ def get_celebrity_detailed_info(celebrity_id):
     print "url_link:{}" .format(url_link)
     try:
         random_useragent = random.choice(USERAGENT_CONFIG)
-        r = requests.get(url_link, headers={'User-Agent': random_useragent} ,verify=False)
+        #r = requests.get(url_link, headers={'User-Agent': random_useragent} ,verify=False)
+        r = requests.get(url_link, headers=douban_headers ,verify=False)
     except:
         r = requests.get(url_link, headers=douban_headers ,verify=False)
     soup = BeautifulSoup(r.text.encode('utf-8'), 'lxml')
@@ -130,12 +131,13 @@ def get_celebrity_detailed_info(celebrity_id):
 
 def get_movie_base_info(subject):
     
-    url_link = 'https://movie.douban.com/subject/{0}' .format(subject)
+    url_link = 'https://movie.douban.com/subject/{0}/' .format(subject)
     #url_link = 'https://movie.douban.com/subject/1296500'
     # request douban
     try:
         random_useragent = random.choice(USERAGENT_CONFIG)
-        r = requests.get(url_link, headers={'User-Agent': random_useragent} ,verify=False)
+        #r = requests.get(url_link, headers={'User-Agent': random_useragent} ,verify=False)
+        r = requests.get(url_link, headers=douban_headers ,verify=False)
     except:
         r = requests.get(url_link, headers=douban_headers ,verify=False)
     finally:
@@ -176,6 +178,16 @@ def get_movie_base_info(subject):
         rating_info = soup.find_all(attrs={'class' : 'rating_sum'})[0].text.strip()
     except IndexError:
         rating_info = "无评分项"
+    # rating_num
+    try:
+        rating_num = float(soup.find("strong", property="v:average").get_text(strip=True))
+    except Exception:
+        rating_num = 'N/A'
+    # rating_sum
+    try:
+        rating_sum = int(soup.find("span", property="v:votes").get_text(strip=True))
+    except Exception:
+        rating_sum = 'N/A'
     # type, name, duration, director, actor, genre, ratingCount, ratingValue
     script_json = soup.find_all(attrs={'type' : 'application/ld+json'})[0].contents[0].strip()
     movie_json = json.loads(script_json, strict=False)
@@ -208,6 +220,10 @@ def get_movie_base_info(subject):
     if ratingCount == '0':
         ratingValue = rating_info
         ratingCount = rating_info
+    if isinstance(rating_num, float):
+        ratingValue = rating_num
+    if isinstance(rating_sum, int):
+        ratingCount = rating_sum
     movie_info['ratingValue'] = ratingValue
     movie_info['ratingCount'] = ratingCount
     # directedBy, cast, region, language, imdb
@@ -311,7 +327,7 @@ def get_movie_detailed_info(f):
         f.seek(0)  # 重置文件指针到文件开始
         for subject_id in f:
             subject_id = subject_id.strip()
-            #data = get_movie_base_info(subject_id)
+            data = get_movie_base_info(subject_id)
             try:
                 data = get_movie_base_info(subject_id)
                 # print "{0} {1}" .format(subject_id, data['error'])
