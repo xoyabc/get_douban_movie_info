@@ -15,7 +15,7 @@ echo "# **第27届上海国际电影节展映片单**
 echo -e "  - 总影片数：${total_num}部\n" >> ${FILE}
 
 
-cat movie.csv |sort |awk -F ',' 'NR>1{print $1}' |uniq |while read unit
+cat movie.csv |awk -F ',' 'NR>1{print $1}' |sort |uniq |while read unit
 do
     unit_num=$(cat movie.csv |grep "${unit}" |wc -l)
     echo "- **${unit}（${unit_num}部）**" >> ${FILE}
