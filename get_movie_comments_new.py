@@ -3,6 +3,7 @@ import requests
 import csv
 import time
 import random
+import re
 from bs4 import BeautifulSoup
 from datetime import datetime
 from decimal import Decimal
@@ -16,15 +17,20 @@ headers = {
          'Connection': 'keep-alive',
          'DNT': '1',
          'HOST': 'movie.douban.com',
-         'Cookie': '__utmc=223695111; _vwo_uuid_v2=DC1819A9385ACA561B32B51177989F115|33c368c4b7f6b3f563c632a4119a2951; Hm_lpvt_19fc7b106453f97b6a84d64302f21a04=1692380997; __utmc=30149280; push_doumail_num=0; __utmv=30149280.5752; _vwo_uuid_v2=DC1819A9385ACA561B32B51177989F115|33c368c4b7f6b3f563c632a4119a2951; bid=QQBZ5tbKfPc; _pk_id.100001.4cf6=15476aa0687612b3.1749580254.; __yadk_uid=c9ojKFU97DPTVMc0XOhxDb81RTYS0jkf; _ga_Y4GN1R87RG=GS2.1.s1757864605$o13$g0$t1757864605$j60$l0$h0; ll="108288"; ct=y; _ga=GA1.2.696822769.1681311745; _ga_PRH9EWN86K=GS2.2.s1761318662$o2$g0$t1761318662$j60$l0$h0; dbcl2="57525233:sltNE/LoMI4"; ck=cXdw; frodotk_db="dd0d9bf6bee11ec19728d3e43ca35c43"; push_noty_num=0; ap_v=0,6.0; _pk_ref.100001.4cf6=%5B%22%22%2C%22%22%2C1761497018%2C%22https%3A%2F%2Fsearch.douban.com%2Fmovie%2Fsubject_search%3Fsearch_text%3D%E8%B5%9D%E5%93%81%26cat%3D1002%22%5D; _pk_ses.100001.4cf6=1; __utma=30149280.696822769.1681311745.1761495178.1761497018.517; __utmb=30149280.0.10.1761497018; __utmz=30149280.1761497018.517.304.utmcsr=search.douban.com|utmccn=(referral)|utmcmd=referral|utmcct=/movie/subject_search; __utma=223695111.696822769.1681311745.1761495178.1761497018.459; __utmb=223695111.0.10.1761497018; __utmz=223695111.1761497018.459.339.utmcsr=search.douban.com|utmccn=(referral)|utmcmd=referral|utmcct=/movie/subject_search'
+         'Cookie': 'bid=HsJsjNjAMW8; _pk_id.100001.4cf6=b1d50a57f469a14d.1767008539.; ll="108288"; _vwo_uuid_v2=D159B0FEAE98E92504C9D5EE1B1FDE8D4|4c028c5dfa7f8d72bb8f8741ccabc525; __utmc=30149280; __utmv=30149280.5752; __utmc=223695111; push_doumail_num=0; ct=y; __yadk_uid=eK3dJ8nVvOxat66TmxD3Uu3vMNlrrXGL; dbcl2="57525233:673b+5fFP+Y"; ck=AU78; frodotk_db="753392586051f06b5f9ab70920f5d141"; push_noty_num=0; ap_v=0,6.0; _pk_ref.100001.4cf6=%5B%22%22%2C%22%22%2C1776618934%2C%22https%3A%2F%2Fsearch.douban.com%2Fmovie%2Fsubject_search%3Fsearch_text%3D%E5%9D%AA%E7%9F%B3%E5%85%88%E7%94%9F%26cat%3D1002%22%5D; _pk_ses.100001.4cf6=1; __utma=30149280.1614386525.1769827582.1776615403.1776618934.54; __utmz=30149280.1776618934.54.39.utmcsr=search.douban.com|utmccn=(referral)|utmcmd=referral|utmcct=/movie/subject_search; __utma=223695111.223407706.1769827582.1776615403.1776618934.52; __utmb=223695111.0.10.1776618934; __utmz=223695111.1776618934.52.41.utmcsr=search.douban.com|utmccn=(referral)|utmcmd=referral|utmcct=/movie/subject_search; __utmt=1; __utmb=30149280.2.10.1776618934'
     }
 
 
 # 随机休息若干秒
 def random_sleep ():
-    sleeptime = random.uniform(2, 5)
+    if line_num < 20:
+        sleeptime = random.uniform(1, 3)
+    elif line_num >= 20 and line_num < 50:
+        sleeptime = random.uniform(3, 5)
+    else:
+        sleeptime = random.uniform(8, 12)
     sleeptime = Decimal(sleeptime).quantize(Decimal('0.00'))
-    time.sleep(sleeptime)
+    time.sleep(float(sleeptime))
 
 
 def read_movie_ids_from_file(filename):
@@ -66,8 +72,23 @@ def get_movie_comments(movie_id, total=100):
         else:
             count = count_per_page
             
+        # 计算总评论条数
+        comment_url = f"https://movie.douban.com/subject/{movie_id}/comments"
+        # 发送请求
+        response = requests.get(comment_url, headers=headers)
+        response.raise_for_status()  # 检查请求是否成功
+        
+        # 解析HTML
+        soup = BeautifulSoup(response.text, 'html.parser')
+        text = soup.find('li', class_='is-active').find('span').text
+        match = re.search(r'\((\d+)\)', text)
+        if match:
+            number = int(match.group(1))
         # 构造评论页URL
-        url = f"https://movie.douban.com/subject/{movie_id}/comments?start={page*count_per_page}&limit={count}&status=P&sort=time"
+        if number <= 100:
+            url = f"https://movie.douban.com/subject/{movie_id}/comments?start={page*count_per_page}&limit={count}&status=P&sort=new_score"
+        else:
+            url = f"https://movie.douban.com/subject/{movie_id}/comments?start={page*count_per_page}&limit={count}&status=P&sort=time"
         
         try:
             # 发送请求
@@ -177,6 +198,11 @@ def save_to_csv(all_comments, filename=None):
 if __name__ == "__main__":
     # 电影ID文件路径
     movie_ids_file = 'movie.list'
+
+    # 获取文件行数
+    with open(movie_ids_file,'r') as f:
+        line_num = sum(1 for line in f)
+        f.seek(0)  # 重置文件指针到文件开始
 
     # 从文件读取电影ID
     movie_ids = read_movie_ids_from_file(movie_ids_file)
