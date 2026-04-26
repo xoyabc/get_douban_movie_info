@@ -26,9 +26,9 @@ def random_sleep ():
     if line_num < 20:
         sleeptime = random.uniform(1, 3)
     elif line_num >= 20 and line_num < 50:
-        sleeptime = random.uniform(3, 5)
+        sleeptime = random.uniform(6, 9)
     else:
-        sleeptime = random.uniform(8, 12)
+        sleeptime = random.uniform(15, 25)
     sleeptime = Decimal(sleeptime).quantize(Decimal('0.00'))
     time.sleep(float(sleeptime))
 
@@ -81,16 +81,15 @@ def get_movie_comments(movie_id, total=100):
         # 解析HTML
         soup = BeautifulSoup(response.text, 'html.parser')
         text = soup.find('li', class_='is-active').find('span').text
-        match = re.search(r'\((\d+)\)', text)
-        if match:
-            number = int(match.group(1))
-        # 构造评论页URL
-        if number <= 100:
-            url = f"https://movie.douban.com/subject/{movie_id}/comments?start={page*count_per_page}&limit={count}&status=P&sort=new_score"
-        else:
-            url = f"https://movie.douban.com/subject/{movie_id}/comments?start={page*count_per_page}&limit={count}&status=P&sort=time"
-        
         try:
+            match = re.search(r'\((\d+)\)', text)
+            if match:
+                number = int(match.group(1))
+            # 构造评论页URL
+            if number <= 100:
+                url = f"https://movie.douban.com/subject/{movie_id}/comments?start={page*count_per_page}&limit={count}&status=P&sort=new_score"
+            else:
+                url = f"https://movie.douban.com/subject/{movie_id}/comments?start={page*count_per_page}&limit={count}&status=P&sort=time"
             # 发送请求
             response = requests.get(url, headers=headers)
             response.raise_for_status()  # 检查请求是否成功
