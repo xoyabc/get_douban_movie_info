@@ -12,7 +12,7 @@ import sys
 # ============ 独立 COOKIE 变量配置 ============
 # 默认空，需要时填写：例如 "bid=xxx; douban-fav-remind=1; __utma=xxx;"
 #COOKIE = ''
-COOKIE = 'll="108288"; bid=sWfGIC5wL5s; _pk_id.100001.4cf6=89189f7febdbdf34.1736991508.; __utmc=30149280; __utmc=223695111; _vwo_uuid_v2=D7597C08C263507773B7720B06F2E3CC0|bdc868cb83b404c57a7cbee6654fed67; __utmv=30149280.5752; douban-fav-remind=1; push_doumail_num=0; _ga=GA1.2.1422620472.1757345064; _ga_Y4GN1R87RG=GS2.1.s1757345064$o1$g0$t1757345065$j59$l0$h0; _ga_PRH9EWN86K=GS2.2.s1762224560$o2$g0$t1762224560$j60$l0$h0; ct=y; dbcl2="57525233:zqw4nT9nSMY"; ck=pkQ8; frodotk_db="9214f7f2ae8d9e79b63ee7d80ba8db6b"; push_noty_num=0; _pk_ref.100001.4cf6=%5B%22%22%2C%22%22%2C1767620551%2C%22https%3A%2F%2Fsearch.douban.com%2Fmovie%2Fsubject_search%3Fsearch_text%3D%E9%98%BF%E5%B0%94%E8%8A%AD%26cat%3D1002%22%5D; _pk_ses.100001.4cf6=1; __utma=30149280.1713331435.1736991509.1767614200.1767620551.614; __utmz=30149280.1767620551.614.416.utmcsr=search.douban.com|utmccn=(referral)|utmcmd=referral|utmcct=/movie/subject_search; __utma=223695111.391573458.1736991509.1767618484.1767620551.526; __utmb=223695111.0.10.1767620551; __utmz=223695111.1767620551.526.446.utmcsr=search.douban.com|utmccn=(referral)|utmcmd=referral|utmcct=/movie/subject_search; __utmb=30149280.2.10.1767620551'
+COOKIE = 'bid=HsJsjNjAMW8; ll="108288"; _vwo_uuid_v2=D159B0FEAE98E92504C9D5EE1B1FDE8D4|4c028c5dfa7f8d72bb8f8741ccabc525; _pk_id.100001.8cb4=0ab8050b5417ea3b.1767544622.; __utmc=30149280; __utmv=30149280.5752; push_doumail_num=0; ct=y; _pk_ref.100001.8cb4=%5B%22%22%2C%22%22%2C1774977252%2C%22https%3A%2F%2Fmovie.douban.com%2Fsubject%2F38396228%2F%22%5D; dbcl2="57525233:673b+5fFP+Y"; ck=AU78; frodotk_db="753392586051f06b5f9ab70920f5d141"; ap_v=0,6.0; push_noty_num=0; __utma=30149280.1614386525.1769827582.1775142095.1775147146.23; __utmb=30149280.0.10.1775147146; __utmz=30149280.1775147146.23.17.utmcsr=search.douban.com|utmccn=(referral)|utmcmd=referral|utmcct=/movie/subject_search'
 # =============================================
 # 分页参数模板
 PAGE_PARAMS = "?start={}&sort=seq&playable=0&sub_type="
@@ -170,7 +170,7 @@ def crawl_single_page(start, total_pages, is_last_page=False):
                 movie_info["评价人数"] = people_match.group(1) if people_match else "0"
             else:
                 movie_info["评分"] = "暂无评分"
-                movie_info["评价人数"] = "0"
+                movie_info["评价人数"] = "暂无评分"
 
             movie_list.append(movie_info)
             print(f"✅ 第{idx}部 | 条目ID：{movie_info['条目ID']} | 中文名：{movie_info['中文片名']} | 评分：{movie_info['评分']} | 评价人数：{movie_info['评价人数']} | 添加日期：{movie_info['添加日期']} | 评语：{movie_info['评语']}")
