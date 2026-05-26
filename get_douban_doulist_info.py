@@ -167,7 +167,7 @@ def crawl_single_page(start, total_pages, is_last_page=False):
                 movie_info["评分"] = rating_nums_tag.get_text(strip=True) if rating_nums_tag else "暂无评分"
                 people_text = rating_tag.get_text(strip=True)
                 people_match = re.search(r'\((\d+)人评价\)', people_text)
-                movie_info["评价人数"] = people_match.group(1) if people_match else "0"
+                movie_info["评价人数"] = people_match.group(1) if people_match else "暂无评分"
             else:
                 movie_info["评分"] = "暂无评分"
                 movie_info["评价人数"] = "暂无评分"
