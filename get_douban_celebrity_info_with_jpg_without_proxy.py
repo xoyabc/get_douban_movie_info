@@ -199,7 +199,7 @@ def get_movie_detailed_info(f):
         movie_info_list = []
         for subject_id in f:
             subject_id = subject_id.strip()
-            url_link = 'https://movie.douban.com/subject/{0}' .format(subject_id)
+            url_link = 'https://movie.douban.com/subject/{0}/' .format(subject_id)
             r = requests.get(url_link, headers=douban_headers, verify=False)
             if r.status_code == 200:
                 movie_error = None
