@@ -30,7 +30,7 @@ proxies = {
 
 # header content
 douban_headers = {
-     'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.81 Safari/537.36',
+     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36',
      'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
      'Accept-Encoding': 'gzip, deflate, sdch',
      'Accept-Language': 'zh-CN,zh;q=0.8,en-US;q=0.6,en;q=0.4,en-GB;q=0.2,zh-TW;q=0.2',
@@ -80,6 +80,83 @@ def store_to_file(**DICT):
     return ok_msg, True
 
 
+
+def get_constellation_from_birthday(birthday_str):
+    """
+    Calculate constellation from birthday string in Chinese format
+    Formats: '1946年12月18日', '1946年12月', '12月18日', '1990-05-15', '05-15'
+    Returns constellation name in Chinese
+    """
+    if birthday_str == 'N/A' or not birthday_str:
+        return 'N/A'
+    
+    # Constellation mapping: (start_month, start_day) -> constellation_name
+    constellations = [
+        ((3, 21), (4, 19), '白羊座'),
+        ((4, 20), (5, 20), '金牛座'),
+        ((5, 21), (6, 21), '双子座'),
+        ((6, 22), (7, 22), '巨蟹座'),
+        ((7, 23), (8, 22), '狮子座'),
+        ((8, 23), (9, 22), '处女座'),
+        ((9, 23), (10, 23), '天秤座'),
+        ((10, 24), (11, 22), '天蝎座'),
+        ((11, 23), (12, 21), '射手座'),
+        ((12, 22), (1, 19), '摩羯座'),
+        ((1, 20), (2, 18), '水瓶座'),
+        ((2, 19), (3, 20), '双鱼座'),
+    ]
+    
+    try:
+        month = None
+        day = None
+        
+        # Handle Chinese format: '1946年12月18日', '1946年12月', '12月18日'
+        if '年' in birthday_str:
+            # Extract month and day from Chinese format
+            year_parts = birthday_str.split('年')
+            if len(year_parts) >= 2:
+                remaining = year_parts[1]  # e.g., '12月18日' or '12月'
+                
+                if '月' in remaining:
+                    month_parts = remaining.split('月')
+                    month = int(month_parts[0])
+                    
+                    if len(month_parts) > 1 and month_parts[1]:
+                        # Extract day if present (format: '12月18日')
+                        day_str = month_parts[1].replace('日', '')
+                        if day_str:
+                            day = int(day_str)
+        
+        # Handle Western format: '1990-05-15' or '05-15'
+        elif '-' in birthday_str:
+            parts = birthday_str.split('-')
+            if len(parts) == 3:
+                month, day = int(parts[1]), int(parts[2])
+            elif len(parts) == 2:
+                month, day = int(parts[0]), int(parts[1])
+        
+        if month is None:
+            return 'N/A'
+        
+        if day is None:
+            return 'N/A'
+        
+        # Find matching constellation
+        for (start_m, start_d), (end_m, end_d), name in constellations:
+            # Handle year-wrapping constellations (Capricorn: 12/22 - 1/19)
+            if start_m > end_m:
+                if (month == start_m and day >= start_d) or (month == end_m and day <= end_d):
+                    return name
+            else:
+                if (month == start_m and day >= start_d) or (month == end_m and day <= end_d):
+                    return name
+        
+        return 'N/A'
+    except Exception as e:
+        print "Error parsing birthday: {}" .format(birthday_str)
+        return 'N/A'
+
+
 def get_celebrity_detailed_info(celebrity_id):
     celebrity_info = {}
     if 'celebrity' not in celebrity_id:
@@ -88,10 +165,20 @@ def get_celebrity_detailed_info(celebrity_id):
     else:
         celebrity_info['error'] = None
     url_link = 'https://movie.douban.com{0}' .format(celebrity_id)
-    print ("url_link: ", url_link)
     try:
-        #r = requests.get(url_link, headers=douban_headers, verify=False, allow_redirects=True)
-        r = requests.get(url_link, headers={'User-Agent': 'curl/7.61.1'} ,verify=False)
+        session = requests.Session()
+        session.headers.update({
+            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+        })
+        # Get the redirect target using HEAD request (faster, no full page download)
+        r = session.head(url_link, allow_redirects=False, timeout=10, verify=False)
+
+        # If there's a redirect, use the target URL
+        if r.status_code in [301, 302, 303, 307, 308]:
+            url_link = r.headers.get('Location')
+            print "Using redirected URL: {}" .format(url_link)
+        print ("url_link: ", url_link)
+        r = requests.get(url_link, headers=douban_headers, verify=False, allow_redirects=True)
     except:
         random_useragent = random.choice(USERAGENT_CONFIG)
         r = requests.get(url_link, headers={'User-Agent': random_useragent} ,verify=False)
@@ -121,10 +208,15 @@ def get_celebrity_detailed_info(celebrity_id):
 
     try:
         constellation_anchor = soup.find("span", text=re.compile("星座".decode("utf-8")))
-        #celebrity_info['constellation'] = constellation_anchor.next_element.next_element.strip().split('\n')[1].strip()      
-        celebrity_info['constellation'] = constellation_anchor.next_element.next_element.next_element.text.strip()
-    except AttributeError:
-        celebrity_info['constellation'] = 'N/A'
+        celebrity_info['constellation'] = constellation_anchor.next_element.next_element.strip().split('\n')[1].strip()      
+    except:
+        # Calculate constellation from birthday if not found on page
+        try:
+            birthday_anchor = soup.find("span", text=re.compile("出生日期".decode("utf-8")))
+            birthday = birthday_anchor.next_element.next_element.next_element.text.strip()
+        except:
+            birthday = 'N/A'
+        celebrity_info['constellation'] = get_constellation_from_birthday(birthday)
     
     try:
         birthday_anchor = soup.find("span", text=re.compile("出生日期".decode("utf-8")))
@@ -251,7 +343,7 @@ def get_movie_detailed_info(f):
                         movie_info_list.append(movie_info)
                         print movie_name, movie_type, celebrity_name
                     else:
-                        for person in  movie_json[i][0:4]:
+                        for person in  movie_json[i][0:1]:
                             name = person.get('name', 'N/A')
                             person_id = person.get('url', 'N/A')
                             print person_id, movie_json
