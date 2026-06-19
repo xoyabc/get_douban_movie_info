@@ -17,7 +17,7 @@ headers = {
          'Connection': 'keep-alive',
          'DNT': '1',
          'HOST': 'movie.douban.com',
-         'Cookie': 'bid=HsJsjNjAMW8; _pk_id.100001.4cf6=b1d50a57f469a14d.1767008539.; ll="108288"; _vwo_uuid_v2=D159B0FEAE98E92504C9D5EE1B1FDE8D4|4c028c5dfa7f8d72bb8f8741ccabc525; __utmc=30149280; __utmv=30149280.5752; __utmc=223695111; push_doumail_num=0; ct=y; __yadk_uid=eK3dJ8nVvOxat66TmxD3Uu3vMNlrrXGL; dbcl2="57525233:673b+5fFP+Y"; ck=AU78; frodotk_db="753392586051f06b5f9ab70920f5d141"; push_noty_num=0; ap_v=0,6.0; _pk_ref.100001.4cf6=%5B%22%22%2C%22%22%2C1776618934%2C%22https%3A%2F%2Fsearch.douban.com%2Fmovie%2Fsubject_search%3Fsearch_text%3D%E5%9D%AA%E7%9F%B3%E5%85%88%E7%94%9F%26cat%3D1002%22%5D; _pk_ses.100001.4cf6=1; __utma=30149280.1614386525.1769827582.1776615403.1776618934.54; __utmz=30149280.1776618934.54.39.utmcsr=search.douban.com|utmccn=(referral)|utmcmd=referral|utmcct=/movie/subject_search; __utma=223695111.223407706.1769827582.1776615403.1776618934.52; __utmb=223695111.0.10.1776618934; __utmz=223695111.1776618934.52.41.utmcsr=search.douban.com|utmccn=(referral)|utmcmd=referral|utmcct=/movie/subject_search; __utmt=1; __utmb=30149280.2.10.1776618934'
+         'Cookie': 'bid=20uJiaW_t90; __utmc=30149280; _vwo_uuid_v2=D58A38170FFC668C0CB18C36B0C691B37|cd739ae2795d08a093853c5a52a8dde1; viewed="36180769_35017678"; push_doumail_num=0; __utmv=30149280.5752; _pk_id.100001.4cf6=cc7b5c9ceec1371f.1776999850.; ll="108288"; __utmc=223695111; push_noty_num=0; ct=y; dbcl2="57525233:vUDckBOfmAM"; ck=t-SR; frodotk_db="f7c52970416f98a5e74f7c50c44ec9ef"; __utmz=30149280.1781417962.59.38.utmcsr=search.douban.com|utmccn=(referral)|utmcmd=referral|utmcct=/book/subject_search; ap_v=0,6.0; __utmz=223695111.1781418005.47.43.utmcsr=search.douban.com|utmccn=(referral)|utmcmd=referral|utmcct=/movie/subject_search; __utma=30149280.1078343254.1776908118.1781417962.1781422205.60; __utmb=30149280.0.10.1781422205; __utma=223695111.561227052.1776999850.1781418005.1781422205.48; __utmb=223695111.0.10.1781422205; _pk_ref.100001.4cf6=%5B%22%22%2C%22%22%2C1781422205%2C%22https%3A%2F%2Fsearch.douban.com%2Fmovie%2Fsubject_search%3Fsearch_text%3D%E5%85%9A%E5%90%8C%E4%BC%90%E5%BC%82%26cat%3D1002%22%5D; _pk_ses.100001.4cf6=1'
     }
 
 
@@ -28,7 +28,7 @@ def random_sleep ():
     elif line_num >= 20 and line_num < 50:
         sleeptime = random.uniform(6, 9)
     else:
-        sleeptime = random.uniform(15, 25)
+        sleeptime = random.uniform(28, 38)
     sleeptime = Decimal(sleeptime).quantize(Decimal('0.00'))
     time.sleep(float(sleeptime))
 
@@ -109,7 +109,7 @@ def get_movie_comments(movie_id, total=100):
                 nickname = nickname_tag.text.strip() if nickname_tag else "未知用户"
                 
                 # 评论时间
-                comment_time_tag = item.find('span', class_='comment-time')
+                comment_time_tag = item.find('a', class_='comment-time')
                 comment_time = comment_time_tag['title'].strip() if comment_time_tag else "未知时间"
                 
                 # 评价星级
