@@ -7,6 +7,7 @@ import re
 from bs4 import BeautifulSoup
 from datetime import datetime
 from decimal import Decimal
+from headers_config import HEADER_CONFIG
 
 # 设置请求头，模拟浏览器访问
 headers = {
@@ -20,6 +21,7 @@ headers = {
          'Cookie': 'bid=20uJiaW_t90; __utmc=30149280; _vwo_uuid_v2=D58A38170FFC668C0CB18C36B0C691B37|cd739ae2795d08a093853c5a52a8dde1; viewed="36180769_35017678"; push_doumail_num=0; __utmv=30149280.5752; _pk_id.100001.4cf6=cc7b5c9ceec1371f.1776999850.; ll="108288"; __utmc=223695111; push_noty_num=0; ct=y; dbcl2="57525233:vUDckBOfmAM"; ck=t-SR; frodotk_db="f7c52970416f98a5e74f7c50c44ec9ef"; __utmz=30149280.1781417962.59.38.utmcsr=search.douban.com|utmccn=(referral)|utmcmd=referral|utmcct=/book/subject_search; ap_v=0,6.0; __utmz=223695111.1781418005.47.43.utmcsr=search.douban.com|utmccn=(referral)|utmcmd=referral|utmcct=/movie/subject_search; __utma=30149280.1078343254.1776908118.1781417962.1781422205.60; __utmb=30149280.0.10.1781422205; __utma=223695111.561227052.1776999850.1781418005.1781422205.48; __utmb=223695111.0.10.1781422205; _pk_ref.100001.4cf6=%5B%22%22%2C%22%22%2C1781422205%2C%22https%3A%2F%2Fsearch.douban.com%2Fmovie%2Fsubject_search%3Fsearch_text%3D%E5%85%9A%E5%90%8C%E4%BC%90%E5%BC%82%26cat%3D1002%22%5D; _pk_ses.100001.4cf6=1'
     }
 
+headers['Cookie'] = HEADER_CONFIG['Cookie']
 
 # 随机休息若干秒
 def random_sleep ():
